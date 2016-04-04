@@ -13,7 +13,7 @@ Dialog::Dialog(QWidget *parent) :
     {
         Item item;
         item.setColor(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
-        item.setPosition(QPoint(qrand() % 400, qrand() % 400));
+        item.setPosition(QPoint(qrand() % 100, qrand() % 100));
         QPolygon polygon;
         polygon << QPoint(qrand() % 400, qrand() % 400) << QPoint(qrand() % 400, qrand() % 400);
         QPainterPath path;
@@ -28,7 +28,6 @@ void Dialog::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     QPen penRed = QPen(Qt::red, 5);
-    QBrush brushYellow = QBrush(Qt::yellow);
     painter.setPen(penRed);
 
     painter.drawLine(this->rect().topLeft(), this->rect().topRight());
@@ -36,13 +35,17 @@ void Dialog::paintEvent(QPaintEvent *event)
     painter.drawLine(this->rect().bottomRight(), this->rect().bottomLeft());
     painter.drawLine(this->rect().bottomLeft(), this->rect().topLeft());
 
-    qDebug() << items.size();
+
+
+
+   // qDebug() << items.size();
 
     foreach(const Item & item,items)
     {
+
         painter.setPen({item.getColor(), 2});
         painter.drawPath( item.getPath() );
-        qDebug() << item.getPath();
+        //qDebug() << item.getPath();
 
     }
 }

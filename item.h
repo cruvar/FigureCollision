@@ -31,9 +31,6 @@ private:
     QPoint position;
     QPolygon geometry;
 
-    qreal angle;
-    qreal speed;
-
 };
 
 #endif // ITEM_H
