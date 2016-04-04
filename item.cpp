@@ -5,7 +5,4 @@
 #include <QtGui>
 #include <QPainter>
 
-Item::Item()
-{
 
-}

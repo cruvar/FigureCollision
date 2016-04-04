@@ -20,3 +20,5 @@ HEADERS  += dialog.h \
     item.h
 
 FORMS    += dialog.ui
+
+CONFIG += c++11

@@ -8,19 +8,22 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    myitem = new Item;
 
-    myitem->setColor(Qt::red);
-    myitem->setPosition(this->rect().center());
-    QPolygon polygon;
-    polygon << QPoint(qrand() % 200, qrand() % 200) << QPoint(qrand() % 200, qrand() % 200);
-    QPainterPath path;
-    path.addPolygon(polygon);
-    myitem->setPath(path);
+    //
 
+    for( int i(0); i < 15; ++i )
+    {
+        Item item;
+        item.setColor(Qt::red);
+        item.setPosition(QPoint(qrand() % 200, qrand() % 200));
+        QPolygon polygon;
+        polygon << QPoint(qrand() % 200, qrand() % 200) << QPoint(qrand() % 200, qrand() % 200);
+        QPainterPath path;
+        path.addPolygon(polygon);
 
-
-   // std::vector<Items> target = {};
+        item.setPath(path);
+        items.push_back(item);
+    }
 }
 
 void Dialog::paintEvent(QPaintEvent *event)
@@ -35,14 +38,15 @@ void Dialog::paintEvent(QPaintEvent *event)
     painter.drawLine(this->rect().bottomRight(), this->rect().bottomLeft());
     painter.drawLine(this->rect().bottomLeft(), this->rect().topLeft());
 
-/*
-    QPainterPath epath;
-    epath.addEllipse(this->rect().center(), 50, 50);
-    painter.fillPath(epath,brushYellow);
-*/
+    qDebug() << items.size();
 
-    painter.translate(myitem->getPosition());
-    painter.drawPath( myitem->getPath() );
+    foreach(const Item & item,items)
+    {
+        painter.setPen({item.getColor(), 2});
+        painter.drawPath( item.getPath() );
+        qDebug() << item.getPath();
+
+    }
 }
 
 Dialog::~Dialog()

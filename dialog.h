@@ -18,15 +18,12 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
-    struct Items
-    {
-
-    };
 
 private:
     Ui::Dialog *ui;
     Item *myitem;
     void paintEvent(QPaintEvent *event);
+    std::vector<Item> items;
 };
 
 #endif // DIALOG_H
