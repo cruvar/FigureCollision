@@ -9,15 +9,13 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //
-
     for( int i(0); i < 15; ++i )
     {
         Item item;
-        item.setColor(Qt::red);
-        item.setPosition(QPoint(qrand() % 200, qrand() % 200));
+        item.setColor(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
+        item.setPosition(QPoint(qrand() % 400, qrand() % 400));
         QPolygon polygon;
-        polygon << QPoint(qrand() % 200, qrand() % 200) << QPoint(qrand() % 200, qrand() % 200);
+        polygon << QPoint(qrand() % 400, qrand() % 400) << QPoint(qrand() % 400, qrand() % 400);
         QPainterPath path;
         path.addPolygon(polygon);
 
