@@ -1,7 +1,10 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
+#include <vector>
 #include <QDialog>
+#include "item.h"
+
 
 namespace Ui {
 class Dialog;
@@ -15,8 +18,14 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
+    struct Items
+    {
+
+    };
+
 private:
     Ui::Dialog *ui;
+    Item *myitem;
     void paintEvent(QPaintEvent *event);
 };
 
