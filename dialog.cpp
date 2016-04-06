@@ -10,7 +10,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
 
     timer = new QTimer(this);
-    timer->start( 10 );
+    timer->start( 100 );
     connect( this->timer, SIGNAL( timeout() ), this, SLOT( update() ) );
 
     //квадраты
@@ -20,9 +20,9 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setPosition    ( QPoint(qrand() % 300, qrand() % 300) );
-        item.setGeometry    ( { QPoint( 10,10 ), QPoint( 10,50 ),
-                                QPoint( 50,50 ), QPoint( 50,10 ),
-                                QPoint( 10,10 ) } );
+        item.setGeometry    ( { QPoint( -25,25 ), QPoint( -25,-25 ),
+                                QPoint( 25,-25 ), QPoint( 25,25 ),
+                                QPoint( -25,25 ) } );
         QPainterPath path;
         path.addPolygon     ( item.getGeometry() );
         item.setPath        ( path );
@@ -36,8 +36,8 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setPosition    ( QPoint(qrand() % 300, qrand() % 300 ) );
-        item.setGeometry    ( {QPoint(30,10), QPoint(10,45),
-                               QPoint(50,45), QPoint(30,10),
+        item.setGeometry    ( {QPoint(0,30), QPoint(-25,-15),
+                               QPoint(25,-15), QPoint(0,30),
                               } );
         QPainterPath path;
         path.addPolygon     ( item.getGeometry() );
@@ -67,6 +67,7 @@ void Dialog::paintEvent( QPaintEvent *event )
 
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
+
         painter.rotate      ( QDateTime::currentMSecsSinceEpoch() % 360 );
         painter.setPen      ( { item.getColorPen(), 2 } );
         painter.fillPath    ( item.getPath(), item.getColorFill() );

@@ -24,7 +24,6 @@ public:
     const QPainterPath & getPath() const { return this->path; }
 
 
-
 private:
 
     QPainterPath path;
