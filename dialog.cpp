@@ -60,7 +60,7 @@ void Dialog::paintEvent(QPaintEvent *event)
 
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
-        //painter.rotate(qrand() % 360);
+        painter.rotate(QDateTime::currentMSecsSinceEpoch() % 360);
         painter.setPen      ( {item.getColorPen(), 2} );
         painter.fillPath    ( item.getPath(), item.getColorFill() );
         painter.drawPath    ( item.getPath() );
