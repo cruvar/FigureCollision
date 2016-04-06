@@ -22,6 +22,7 @@ public:
 private:
     Ui::Dialog *ui;
     Item *myitem;
+    QTimer *timer;
     void paintEvent(QPaintEvent *event);
     std::vector<Item> items;
 };
