@@ -9,16 +9,34 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    for( int i(0); i < 15; ++i )
+    //квадраты
+    for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setColor(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
-        item.setPosition(QPoint(qrand() % 100, qrand() % 100));
-        QPolygon polygon;
-        polygon << QPoint(qrand() % 400, qrand() % 400) << QPoint(qrand() % 400, qrand() % 400);
+        item.setColorPen(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
+        item.setColorFill(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
+        item.setPosition(QPoint(qrand() % 300, qrand() % 300));
+        item.setGeometry({QPoint(10,10), QPoint(10,50),
+                          QPoint(50,50), QPoint(50,10),
+                          QPoint(10,10)} );
         QPainterPath path;
-        path.addPolygon(polygon);
+        path.addPolygon(item.getGeometry());
+        item.setPath(path);
+        items.push_back(item);
+    }
 
+    //треугольники
+    for( int i(0); i < 5; ++i )
+    {
+        Item item;
+        item.setColorPen(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
+        item.setColorFill(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
+        item.setPosition(QPoint(qrand() % 300, qrand() % 300));
+        item.setGeometry({QPoint(30,10), QPoint(10,50),
+                          QPoint(50,50), QPoint(30,10),
+                          } );
+        QPainterPath path;
+        path.addPolygon(item.getGeometry());
         item.setPath(path);
         items.push_back(item);
     }
@@ -36,17 +54,14 @@ void Dialog::paintEvent(QPaintEvent *event)
     painter.drawLine(this->rect().bottomLeft(), this->rect().topLeft());
 
 
-
-
-   // qDebug() << items.size();
-
     foreach(const Item & item,items)
     {
-
-        painter.setPen({item.getColor(), 2});
-        painter.drawPath( item.getPath() );
-        //qDebug() << item.getPath();
-
+        painter.save();     // сохранили состояние пеинтера
+        painter.translate   ( item.getPosition() );
+        painter.setPen      ( {item.getColorPen(), 2} );
+        painter.fillPath    ( item.getPath(), item.getColorFill() );
+        painter.drawPath    ( item.getPath() );
+        painter.restore();  // вернули в прежнее состояние
     }
 }
 

@@ -10,23 +10,26 @@ class Item
 {
 public:
 
-    void setColor(QColor value)                 { this->color = value; }
-    void setPosition(QPoint pos)                { this->position = pos; }
-    void setGeometry(const QPolygon & polygon)  { this->geometry = polygon; }
-    void setPath(const QPainterPath & path)     { this->path = path; }
+    void setColorPen(QColor color)                  { this->colorPen = color; }
+    void setColorFill(QColor color)                 { this->colorFill = color; }
+    void setPosition(QPoint pos)                    { this->position = pos; }
+    void setGeometry(const QVector<QPoint> &points) { this->geometry = points; }
+    void setPath(const QPainterPath & path)         { this->path = path; }
 
 
-    const QColor & getColor() const      { return this->color; }
+    const QColor & getColorPen() const   { return this->colorPen; }
+    const QColor & getColorFill() const  { return this->colorFill; }
     const QPoint & getPosition() const   { return this->position; }
     const QPolygon & getGeometry() const { return this->geometry; }
     const QPainterPath & getPath() const { return this->path; }
 
 
+
 private:
 
     QPainterPath path;
-    QColor color;
-    QPen pen;
+    QColor colorPen;
+    QColor colorFill;
     QBrush brush;
     QPoint position;
     QPolygon geometry;
