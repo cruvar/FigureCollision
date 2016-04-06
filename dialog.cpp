@@ -32,8 +32,8 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorPen(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
         item.setColorFill(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255));
         item.setPosition(QPoint(qrand() % 300, qrand() % 300));
-        item.setGeometry({QPoint(30,10), QPoint(10,50),
-                          QPoint(50,50), QPoint(30,10),
+        item.setGeometry({QPoint(30,10), QPoint(10,45),
+                          QPoint(50,45), QPoint(30,10),
                           } );
         QPainterPath path;
         path.addPolygon(item.getGeometry());
@@ -45,6 +45,7 @@ Dialog::Dialog(QWidget *parent) :
 void Dialog::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
     QPen penRed = QPen(Qt::red, 5);
     painter.setPen(penRed);
 
@@ -56,8 +57,10 @@ void Dialog::paintEvent(QPaintEvent *event)
 
     foreach(const Item & item,items)
     {
+
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
+        //painter.rotate(qrand() % 360);
         painter.setPen      ( {item.getColorPen(), 2} );
         painter.fillPath    ( item.getPath(), item.getColorFill() );
         painter.drawPath    ( item.getPath() );
