@@ -10,8 +10,14 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
 
     timer = new QTimer(this);
-    timer->start( 100 );
-    connect( this->timer, SIGNAL( timeout() ), this, SLOT( update() ) );
+    timer->start( 5 );
+    connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
+
+    x = qrand() % this->rect().width();
+    y = qrand() % this->rect().height();
+
+    vx = 0.5;
+    vy = 0.5;
 
     //квадраты
     for( int i(0); i < 5; ++i )
@@ -19,7 +25,7 @@ Dialog::Dialog(QWidget *parent) :
         Item item;
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPoint(qrand() % 300, qrand() % 300) );
+        item.setPosition    ( QPoint( x, y ) );
         item.setGeometry    ( { QPoint( -25,25 ), QPoint( -25,-25 ),
                                 QPoint( 25,-25 ), QPoint( 25,25 ),
                                 QPoint( -25,25 ) } );
@@ -35,7 +41,7 @@ Dialog::Dialog(QWidget *parent) :
         Item item;
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPoint(qrand() % 300, qrand() % 300 ) );
+        item.setPosition    ( QPoint(qrand() % this->rect().width(), qrand() % this->rect().height()) );
         item.setGeometry    ( {QPoint(0,30), QPoint(-25,-15),
                                QPoint(25,-15), QPoint(0,30),
                               } );
@@ -45,7 +51,40 @@ Dialog::Dialog(QWidget *parent) :
         items.push_back     ( item );
     }
 
+    //кружочки
+    for( int i(0); i < 5; ++i )
+    {
+        Item item;
+        item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
+        item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
+        item.setPosition    ( QPoint(qrand() % this->rect().width(), qrand() % this->rect().height()) );
 
+        int n = 20;
+        QPolygonF polygon;
+        for( int i(0); i <= n; ++i)
+        {
+            qreal fAngle = 2 * 3.14 * i / n;
+            qreal x      = 0 + cos( fAngle ) * 20;
+            qreal y      = 0 + sin( fAngle ) * 20;
+            //item.setGeometry( {QPoint( x, y )} );
+            polygon << QPointF(x,y);
+        }
+
+        QPainterPath path;
+        path.addPolygon     ( polygon );
+        item.setPath        ( path );
+        items.push_back     ( item );
+
+    }
+
+}
+
+void Dialog::on_timeOut()
+{
+    x += vx;
+    y += vy;
+
+    update();
 }
 
 
@@ -67,8 +106,7 @@ void Dialog::paintEvent( QPaintEvent *event )
 
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
-
-        painter.rotate      ( QDateTime::currentMSecsSinceEpoch() % 360 );
+        painter.translate   ( QPoint( x, y ));
         painter.setPen      ( { item.getColorPen(), 2 } );
         painter.fillPath    ( item.getPath(), item.getColorFill() );
         painter.drawPath    ( item.getPath() );

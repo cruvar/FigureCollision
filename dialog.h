@@ -23,8 +23,16 @@ private:
     Ui::Dialog *ui;
     Item *myitem;
     QTimer *timer;
+
     void paintEvent(QPaintEvent *event);
+
     std::vector<Item> items;
+
+    qreal x, y;
+    qreal vx, vy;
+
+private slots:
+    void on_timeOut();
 };
 
 #endif // DIALOG_H
