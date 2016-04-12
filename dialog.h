@@ -28,8 +28,7 @@ private:
 
     std::vector<Item> items;
 
-    qreal x, y;
-    qreal vx, vy;
+
 
 private slots:
     void on_timeOut();

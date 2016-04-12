@@ -10,22 +10,18 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
 
     timer = new QTimer(this);
-    timer->start( 5 );
+    timer->start( 50 );
     connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
-
-    x = qrand() % this->rect().width();
-    y = qrand() % this->rect().height();
-
-    vx = 0.5;
-    vy = 0.5;
 
     //квадраты
     for( int i(0); i < 5; ++i )
     {
         Item item;
+        item.setVelocityX(0.25);
+        item.setVelocityY(0.25);
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPoint( x, y ) );
+        item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ) );
         item.setGeometry    ( { QPoint( -25,25 ), QPoint( -25,-25 ),
                                 QPoint( 25,-25 ), QPoint( 25,25 ),
                                 QPoint( -25,25 ) } );
@@ -39,9 +35,11 @@ Dialog::Dialog(QWidget *parent) :
     for( int i(0); i < 5; ++i )
     {
         Item item;
+        item.setVelocityX(0.5);
+        item.setVelocityY(0.5);
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPoint(qrand() % this->rect().width(), qrand() % this->rect().height()) );
+        item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
         item.setGeometry    ( {QPoint(0,30), QPoint(-25,-15),
                                QPoint(25,-15), QPoint(0,30),
                               } );
@@ -55,9 +53,11 @@ Dialog::Dialog(QWidget *parent) :
     for( int i(0); i < 5; ++i )
     {
         Item item;
+        item.setVelocityX(0.75);
+        item.setVelocityY(0.75);
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPoint(qrand() % this->rect().width(), qrand() % this->rect().height()) );
+        item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
 
         int n = 20;
         QPolygonF polygon;
@@ -81,8 +81,14 @@ Dialog::Dialog(QWidget *parent) :
 
 void Dialog::on_timeOut()
 {
-    x += vx;
-    y += vy;
+    for( Item & item:items )
+        {
+            item.setPosition( QPointF( item.getPosition().x() + item.getVelocityX(), item.getPosition().y() + item.getVelocityY() ) );
+
+            qDebug() << item.getPosition();
+            qDebug() << item.getVelocityX();
+            qDebug() << item.getVelocityY();
+        }
 
     update();
 }
@@ -103,10 +109,8 @@ void Dialog::paintEvent( QPaintEvent *event )
 
     foreach( const Item & item,items )
     {
-
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
-        painter.translate   ( QPoint( x, y ));
         painter.setPen      ( { item.getColorPen(), 2 } );
         painter.fillPath    ( item.getPath(), item.getColorFill() );
         painter.drawPath    ( item.getPath() );
