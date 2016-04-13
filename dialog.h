@@ -18,7 +18,6 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
-
 private:
     Ui::Dialog *ui;
     Item *myitem;
@@ -27,8 +26,6 @@ private:
     void paintEvent(QPaintEvent *event);
 
     std::vector<Item> items;
-
-    const int r = 15;
 
 private slots:
     void on_timeOut();
