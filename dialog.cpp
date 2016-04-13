@@ -9,8 +9,9 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     timer = new QTimer(this);
-    timer->start( 50 );
+    timer->start( 5 );
     connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
 
     //квадраты
@@ -85,9 +86,15 @@ void Dialog::on_timeOut()
         {
             item.setPosition( QPointF( item.getPosition().x() + item.getVelocityX(), item.getPosition().y() + item.getVelocityY() ) );
 
-            qDebug() << item.getPosition();
-            qDebug() << item.getVelocityX();
-            qDebug() << item.getVelocityY();
+            if( item.getPosition().x() > this->width() - r || item.getPosition().x() < r )
+                item.setVelocityX( item.getVelocityX() * -1 );
+
+            if( item.getPosition().y() > this->height() -r || item.getPosition().y() < r )
+                item.setVelocityY( item.getVelocityY() * -1 );
+
+            //qDebug() << item.getPosition();
+            //qDebug() << item.getVelocityX();
+            //qDebug() << item.getVelocityY();
         }
 
     update();

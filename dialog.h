@@ -28,7 +28,7 @@ private:
 
     std::vector<Item> items;
 
-
+    const int r = 15;
 
 private slots:
     void on_timeOut();
