@@ -35,7 +35,6 @@ private:
     QPainterPath path;
     QColor colorPen;
     QColor colorFill;
-    QBrush brush;
     QPointF position;
     QPolygon geometry;
 

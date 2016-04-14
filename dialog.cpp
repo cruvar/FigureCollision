@@ -24,11 +24,9 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ) );
-        item.setGeometry    ( { QPoint( -25,25 ), QPoint( -25,-25 ),
-                                QPoint( 25,-25 ), QPoint( 25,25 ),
-                                QPoint( -25,25 ) } );
+
         QPainterPath path;
-        path.addPolygon     ( item.getGeometry() );
+        path.addRect        ( -25, -25, 50, 50 );
         item.setPath        ( path );
         items.push_back     ( item );
     }
@@ -43,11 +41,15 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
-        item.setGeometry    ( {QPoint(0,30), QPoint(-25,-15),
+       /* item.setGeometry    ( {QPoint(0,30), QPoint(-25,-15),
                                QPoint(25,-15), QPoint(0,30),
-                              } );
+                              } );*/
+        QPolygon triangle;
+        triangle << QPoint(0,30) << QPoint(-25,-15) << QPoint(25,-15) << QPoint(0,30);
+
         QPainterPath path;
-        path.addPolygon     ( item.getGeometry() );
+        //path.addPolygon     ( item.getGeometry() );
+        path.addPolygon(triangle);
         item.setPath        ( path );
         items.push_back     ( item );
     }
@@ -63,19 +65,8 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
 
-        int n = 20;
-        QPolygonF polygon;
-        for( int i(0); i <= n; ++i)
-        {
-            qreal fAngle = 2 * 3.14 * i / n;
-            qreal x      = 0 + cos( fAngle ) * 25;
-            qreal y      = 0 + sin( fAngle ) * 25;
-            //item.setGeometry( {QPoint( x, y )} );
-            polygon << QPointF(x,y);
-        }
-
         QPainterPath path;
-        path.addPolygon     ( polygon );
+        path.addEllipse     ( -25, -25, 50, 50 );
         item.setPath        ( path );
         items.push_back     ( item );
 
@@ -108,8 +99,6 @@ void Dialog::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
     painter.setRenderHint( QPainter::Antialiasing );
-    QPen penRed = QPen( Qt::red, 5 );
-    painter.setPen( penRed );
 
     foreach( const Item & item,items )
     {
