@@ -9,12 +9,11 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     timer = new QTimer(this);
     timer->start( 10 );
     connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
 
-    //квадраты
+    //квадратики
     for( int i(0); i < 5; ++i )
     {
         Item item;
@@ -31,7 +30,7 @@ Dialog::Dialog(QWidget *parent) :
         items.push_back     ( item );
     }
 
-    //треугольники
+    //треугольнички
     for( int i(0); i < 5; ++i )
     {
         Item item;
@@ -41,15 +40,13 @@ Dialog::Dialog(QWidget *parent) :
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
-       /* item.setGeometry    ( {QPoint(0,30), QPoint(-25,-15),
-                               QPoint(25,-15), QPoint(0,30),
-                              } );*/
+
         QPolygon triangle;
-        triangle << QPoint(0,30) << QPoint(-25,-15) << QPoint(25,-15) << QPoint(0,30);
+        triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
+                            << QPoint( 25, -15 ) << QPoint( 0, 30 );
 
         QPainterPath path;
-        //path.addPolygon     ( item.getGeometry() );
-        path.addPolygon(triangle);
+        path.addPolygon     ( triangle );
         item.setPath        ( path );
         items.push_back     ( item );
     }
@@ -85,15 +82,15 @@ void Dialog::on_timeOut()
 
             if( item.getPosition().y() > this->height() - item.getRadius() || item.getPosition().y() < item.getRadius() )
                 item.setVelocityY( item.getVelocityY() * -1 );
-
-            //qDebug() << item.getPosition();
-            //qDebug() << item.getVelocityX();
-            //qDebug() << item.getVelocityY();
         }
 
     update();
 }
 
+void Dialog::mousePressEvent(QMouseEvent *event)
+{
+    qDebug() << event->pos();
+}
 
 void Dialog::paintEvent( QPaintEvent *event )
 {

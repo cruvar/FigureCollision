@@ -23,7 +23,8 @@ private:
     Item *myitem;
     QTimer *timer;
 
-    void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent * event);
+    void paintEvent(QPaintEvent * event);
 
     std::vector<Item> items;
 
