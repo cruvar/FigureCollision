@@ -14,17 +14,16 @@ public:
     void setColorFill( QColor color )           { this->colorFill = color; }
     void setPosition( QPointF pos )             { this->position = pos; }
     void setPath( const QPainterPath & path )   { this->path = path; }
-    void setVelocityX( qreal vx )               { this->velocityX = vx; }
-    void setVelocityY( qreal vy )               { this->velocityY = vy; }
     void setRadius( int radius )                { this->radius = radius; }
+    void setVelocity( QPointF velocity )        { this->velocity = velocity; }
+
 
     const QColor & getColorPen() const   { return this->colorPen; }
     const QColor & getColorFill() const  { return this->colorFill; }
     const QPointF & getPosition() const  { return this->position; }
     const QPainterPath & getPath() const { return this->path; }
-    qreal getVelocityX()                 { return this->velocityX; }
-    qreal getVelocityY()                 { return this->velocityY; }
     int getRadius()                      { return this->radius; }
+    QPointF getVelocity()                { return this->velocity; }
 
 
 private:
@@ -33,10 +32,10 @@ private:
     QColor colorPen;
     QColor colorFill;
     QPointF position;
-    QPolygon geometry;
+    QPointF velocity;
 
     int radius;
-    qreal velocityX, velocityY;
+
 
 };
 

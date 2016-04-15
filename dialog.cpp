@@ -17,8 +17,7 @@ Dialog::Dialog(QWidget *parent) :
     for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setVelocityX   ( 2.5 );
-        item.setVelocityY   ( 2.5 );
+        item.setVelocity    ( QPointF(2, 2) );
         item.setRadius      ( 25 );
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
@@ -34,8 +33,7 @@ Dialog::Dialog(QWidget *parent) :
     for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setVelocityX   ( 0.5 );
-        item.setVelocityY   ( 0.5 );
+        item.setVelocity    ( QPointF(0.5, 0.5) );
         item.setRadius      ( 25 );
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
@@ -55,8 +53,7 @@ Dialog::Dialog(QWidget *parent) :
     for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setVelocityX   ( 0.75 );
-        item.setVelocityY   ( 0.75 );
+        item.setVelocity    ( QPointF(1.25, 1.25) );
         item.setRadius      ( 25 );
         item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
@@ -75,13 +72,13 @@ void Dialog::on_timeOut()
 {
     for( Item & item:items )
         {
-            item.setPosition( QPointF( item.getPosition().x() + item.getVelocityX(), item.getPosition().y() + item.getVelocityY() ) );
+            item.setPosition( QPointF( item.getPosition().x() + item.getVelocity().x(), item.getPosition().y() + item.getVelocity().y() ) );
 
             if( item.getPosition().x() > this->width() - item.getRadius() || item.getPosition().x() < item.getRadius() )
-                item.setVelocityX( item.getVelocityX() * -1 );
+                item.setVelocity( QPointF(item.getVelocity().x() * -1, item.getVelocity().y() ) );
 
             if( item.getPosition().y() > this->height() - item.getRadius() || item.getPosition().y() < item.getRadius() )
-                item.setVelocityY( item.getVelocityY() * -1 );
+                item.setVelocity( QPointF(item.getVelocity().x(), item.getVelocity().y() * -1 ) );
         }
 
     update();
@@ -89,7 +86,18 @@ void Dialog::on_timeOut()
 
 void Dialog::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << event->pos();
+    for( Item & item:items )
+    {
+        if( item.getPath().contains(event->pos() - item.getPosition())&&event->button() == Qt::LeftButton )
+        {
+            qDebug() << event->pos() << "ну ты и ловкач!";
+            item.setColorFill(Qt::red);
+            update();
+            break;
+        }
+
+    }
+
 }
 
 void Dialog::paintEvent( QPaintEvent *event )
