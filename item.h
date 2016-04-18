@@ -18,7 +18,6 @@ public:
     void setRadius( int radius )                { this->radius = radius; }
     void setVelocity( QPointF velocity )        { this->velocity = velocity; }
 
-
     const QColor & getColorPen() const   { return this->colorPen; }
     const QColor & getColorFill() const  { return this->colorFill; }
     const QPointF & getPosition() const  { return this->position; }
@@ -26,9 +25,7 @@ public:
     int getRadius()                      { return this->radius; }
     QPointF getVelocity()                { return this->velocity; }
 
-
 private:
-
 
     QPainterPath path;
     QColor colorPen;
@@ -37,7 +34,6 @@ private:
     QPointF velocity;
 
     int radius;
-
 
 };
 
