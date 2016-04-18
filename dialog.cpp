@@ -86,17 +86,26 @@ void Dialog::on_timeOut()
 
 void Dialog::mousePressEvent(QMouseEvent *event)
 {
-    for( Item & item:items )
+    for (auto item = begin(items); item != end(items); ++item)
     {
-        if( item.getPath().contains(event->pos() - item.getPosition())&&event->button() == Qt::LeftButton )
+
+        if( item->getPath().contains(event->pos() - item->getPosition())&&event->button() == Qt::LeftButton )
         {
-            qDebug() << event->pos() << "ну ты и ловкач!";
-            item.setColorFill(Qt::red);
-            update();
-            break;
+
+                item->setColorFill(Qt::black);
+                qDebug() << event->pos() << "ну ты и ловкач!";
+                items.erase(item);
+
+                update();
+                break;
         }
 
-    }
+        if(std::binary_search(items.begin(), items.end(), item->getPath().contains(event->pos() - item->getPosition())))
+        {
+            qDebug() << "фу, лох";
+        }
+
+     }
 
 }
 

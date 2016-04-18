@@ -6,6 +6,7 @@
 #include <QtGui>
 #include <QPainter>
 
+
 class Item
 {
 public:
@@ -27,6 +28,7 @@ public:
 
 
 private:
+
 
     QPainterPath path;
     QColor colorPen;
