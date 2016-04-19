@@ -25,6 +25,9 @@ public:
     int getRadius()                      { return this->radius; }
     QPointF getVelocity()                { return this->velocity; }
 
+    void drawItem( QPointF position, int radius, QPointF velocity, QColor pen, QColor fill );
+
+
 private:
 
     QPainterPath path;

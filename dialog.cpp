@@ -13,31 +13,32 @@ Dialog::Dialog(QWidget *parent) :
     timer->start( 10 );
     connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
 
+    qsrand (QDateTime::currentMSecsSinceEpoch());
+
     //квадратики
     for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setVelocity    ( QPointF(2, 2) );
-        item.setRadius      ( 25 );
-        item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ) );
-
+        item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
+                        25,
+                        QPointF( 2, 2 ),
+                        QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
+                        QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         QPainterPath path;
-        path.addRect        ( -25, -25, 50, 50 );
-        item.setPath        ( path );
-        items.push_back     ( item );
+        path.addRect    ( -25, -25, 50, 50 );
+        item.setPath    ( path );
+        items.push_back ( item );
     }
 
     //треугольнички
     for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setVelocity    ( QPointF(0.5, 0.5) );
-        item.setRadius      ( 25 );
-        item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
+        item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
+                        25,
+                        QPointF( 1.5, 1.5 ),
+                        QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
+                        QColor (qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
 
         QPolygon triangle;
         triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
@@ -53,11 +54,11 @@ Dialog::Dialog(QWidget *parent) :
     for( int i(0); i < 5; ++i )
     {
         Item item;
-        item.setVelocity    ( QPointF(1.25, 1.25) );
-        item.setRadius      ( 25 );
-        item.setColorPen    ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setColorFill   ( QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        item.setPosition    ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height()) );
+        item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
+                        25,
+                        QPointF( 0.5, 0.5 ),
+                        QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
+                        QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
 
         QPainterPath path;
         path.addEllipse     ( -25, -25, 50, 50 );
@@ -86,25 +87,59 @@ void Dialog::on_timeOut()
 
 void Dialog::mousePressEvent(QMouseEvent *event)
 {
-    bool hit = false;
+    bool hit = false; //этот флаг хранит состояние попал\не попал
     for (auto item = begin(items); item != end(items); ++item)
     {
         if( item->getPath().contains(event->pos() - item->getPosition())&&event->button() == Qt::LeftButton )
         {
-
-                item->setColorFill(Qt::black);
-                qDebug() << event->pos() << "ну ты и ловкач!";
-                items.erase(item);
-                hit = true;
-                update();
-                break;
+            qDebug() << event->pos() << "ну ты и ловкач!";
+            item->setColorFill(Qt::black);
+            items.erase(item);
+            hit = true;
+            update();
+            break;
         }
     }
 
-    if( !hit )
+    if( !hit && !items.empty() )
     {
-        qDebug() << "не попал";
+        qDebug() << event->pos() << "не попал";
+        for( int i(0); i < 3; ++i )
+        {
+            Item item;
+            item.drawItem( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
+                           25,
+                           QPointF(qrand() % 4 - 1, qrand() % 4 - 1),
+                           QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
+                           QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 )
+                           );
+            if(i < 1)
+            {
+                QPainterPath path;
+                path.addRect    ( -25, -25, 50, 50 );
+                item.setPath    ( path );
+            }
+            else if(i < 2)
+            {
+                QPolygon triangle;
+                triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
+                                    << QPoint( 25, -15 ) << QPoint( 0, 30 );
+                QPainterPath path;
+                path.addPolygon     ( triangle );
+                item.setPath        ( path );
+            }
+            else
+            {
+                QPainterPath path;
+                path.addEllipse     ( -25, -25, 50, 50 );
+                item.setPath        ( path );
+            }
+            items.push_back(item);
+        }
+        qDebug() << items.size() << "итемов";
+        update();
     }
+
 }
 
 void Dialog::paintEvent( QPaintEvent *event )
