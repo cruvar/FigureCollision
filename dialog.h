@@ -22,15 +22,23 @@ public:
 private:
     Ui::Dialog *ui;
     Item *myitem;
+    QTimer *timerPaint;
     QTimer *timer;
 
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent * event);
 
+
     std::vector<Item> items;
 
+signals:
+    void noItems();
+
 private slots:
+    void newGame();
     void on_timeOut();
+    void on_startButton_clicked();
+
 };
 
 #endif // DIALOG_H

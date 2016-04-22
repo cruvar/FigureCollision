@@ -9,19 +9,32 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    timer = new QTimer(this);
-    timer->start( 10 );
-    connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
+    timerPaint = new QTimer(this);
+    timer      = new QTimer(this);
+    timer->start(1000);
+    timerPaint->setInterval( 15 );
+
+    connect( ui->startButton, SIGNAL(clicked(bool)), this->timerPaint, SLOT(start()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), this, SLOT(newGame()));
+    connect( this, SIGNAL(noItems()), ui->startButton, SLOT(show()) );
+    connect( this->timerPaint, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
+
+
 
     qsrand (QDateTime::currentMSecsSinceEpoch());
 
+
+}
+
+void Dialog::newGame()
+{
     //квадратики
     for( int i(0); i < 5; ++i )
     {
         Item item;
         item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
                         25,
-                        QPointF( 2, 2 ),
+                        QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
                         QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
                         QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
         QPainterPath path;
@@ -36,7 +49,7 @@ Dialog::Dialog(QWidget *parent) :
         Item item;
         item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
                         25,
-                        QPointF( 1.5, 1.5 ),
+                        QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
                         QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
                         QColor (qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
 
@@ -56,7 +69,7 @@ Dialog::Dialog(QWidget *parent) :
         Item item;
         item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
                         25,
-                        QPointF( 0.5, 0.5 ),
+                        QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
                         QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
                         QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
 
@@ -66,6 +79,11 @@ Dialog::Dialog(QWidget *parent) :
         items.push_back     ( item );
 
     }
+}
+
+void Dialog::on_startButton_clicked()
+{
+    ui->startButton->hide();
 
 }
 
@@ -80,6 +98,7 @@ void Dialog::on_timeOut()
 
             if( item.getPosition().y() > this->height() - item.getRadius() || item.getPosition().y() < item.getRadius() )
                 item.setVelocity( QPointF(item.getVelocity().x(), item.getVelocity().y() * -1 ) );
+
         }
 
     update();
@@ -109,7 +128,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
             Item item;
             item.drawItem( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
                            25,
-                           QPointF(qrand() % 4 - 1, qrand() % 4 - 1),
+                           QPointF(1 + qrand() % 3, 1 + qrand() % 3),
                            QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
                            QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 )
                            );
@@ -136,10 +155,14 @@ void Dialog::mousePressEvent(QMouseEvent *event)
             }
             items.push_back(item);
         }
+
         qDebug() << items.size() << "итемов";
         update();
     }
-
+    if( items.empty() )
+    {
+        this->noItems();
+    }
 }
 
 void Dialog::paintEvent( QPaintEvent *event )
@@ -151,6 +174,7 @@ void Dialog::paintEvent( QPaintEvent *event )
     {
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
+
         painter.setPen      ( { item.getColorPen(), 2 } );
         painter.fillPath    ( item.getPath(), item.getColorFill() );
         painter.drawPath    ( item.getPath() );
@@ -164,3 +188,8 @@ Dialog::~Dialog()
 {
     delete ui;
 }
+
+
+
+
+
