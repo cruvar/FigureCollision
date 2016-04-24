@@ -11,21 +11,21 @@ class Item
 {
 public:
 
-    void setColorPen( QColor color )            { this->colorPen = color; }
-    void setColorFill( QColor color )           { this->colorFill = color; }
-    void setPosition( QPointF pos )             { this->position = pos; }
-    void setPath( const QPainterPath & path )   { this->path = path; }
-    void setRadius( int radius )                { this->radius = radius; }
-    void setVelocity( QPointF velocity )        { this->velocity = velocity; }
+    Item( QPointF position, int radius, QPointF velocity, QColor pen, QColor fill );
 
-    const QColor & getColorPen() const   { return this->colorPen; }
-    const QColor & getColorFill() const  { return this->colorFill; }
-    const QPointF & getPosition() const  { return this->position; }
-    const QPainterPath & getPath() const { return this->path; }
-    int getRadius()                      { return this->radius; }
-    QPointF getVelocity()                { return this->velocity; }
+    inline void setColorPen( QColor color )            { this->colorPen = color; }
+    inline void setColorFill( QColor color )           { this->colorFill = color; }
+    inline void setPosition( QPointF pos )             { this->position = pos; }
+    inline void setPath( const QPainterPath & path )   { this->path = path; }
+    inline void setRadius( int radius )                { this->radius = radius; }
+    inline void setVelocity( QPointF velocity )        { this->velocity = velocity; }
 
-    void drawItem( QPointF position, int radius, QPointF velocity, QColor pen, QColor fill );
+    inline const QColor & getColorPen() const   { return this->colorPen; }
+    inline const QColor & getColorFill() const  { return this->colorFill; }
+    inline const QPointF & getPosition() const  { return this->position; }
+    inline const QPainterPath & getPath() const { return this->path; }
+    inline int getRadius()                      { return this->radius; }
+    inline QPointF getVelocity()                { return this->velocity; }
 
 
 private:

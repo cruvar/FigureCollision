@@ -19,15 +19,16 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
+
 private:
     Ui::Dialog *ui;
     Item *myitem;
-    QTimer *timerPaint;
     QTimer *timer;
+    QElapsedTimer *etimer;
 
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent * event);
-
+    QString timeElapsed();
 
     std::vector<Item> items;
 

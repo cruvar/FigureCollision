@@ -9,82 +9,62 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    timerPaint = new QTimer(this);
-    timer      = new QTimer(this);
-    timer->start(1000);
-    timerPaint->setInterval( 15 );
+    etimer = new QElapsedTimer();
 
-    connect( ui->startButton, SIGNAL(clicked(bool)), this->timerPaint, SLOT(start()) );
+    timer = new QTimer(this);
+    timer->setInterval( 15 );
+
+    connect( ui->startButton, SIGNAL(clicked(bool)), this->timer, SLOT(start()) );
     connect( ui->startButton, SIGNAL(clicked(bool)), this, SLOT(newGame()));
     connect( this, SIGNAL(noItems()), ui->startButton, SLOT(show()) );
-    connect( this->timerPaint, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
-
-
+    connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
     qsrand (QDateTime::currentMSecsSinceEpoch());
-
 
 }
 
 void Dialog::newGame()
 {
-    //квадратики
-    for( int i(0); i < 5; ++i )
+    etimer->start();
+    for( int i(0); i < 15; ++i )
     {
-        Item item;
-        item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
+        Item item( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
                         25,
                         QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
                         QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
                         QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-        QPainterPath path;
-        path.addRect    ( -25, -25, 50, 50 );
-        item.setPath    ( path );
+
+
+            if(i < 5)
+            {
+                QPainterPath path;
+                path.addRect    ( -25, -25, 50, 50 );
+                item.setPath    ( path );
+            }
+            else if(i < 10)
+            {
+                QPolygon triangle;
+                triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
+                                    << QPoint( 25, -15 ) << QPoint( 0, 30 );
+                QPainterPath path;
+                path.addPolygon     ( triangle );
+                item.setPath        ( path );
+            }
+            else
+            {
+                QPainterPath path;
+                path.addEllipse     ( -25, -25, 50, 50 );
+                item.setPath        ( path );
+            }
+
         items.push_back ( item );
-    }
-
-    //треугольнички
-    for( int i(0); i < 5; ++i )
-    {
-        Item item;
-        item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
-                        25,
-                        QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
-                        QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
-                        QColor (qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-
-        QPolygon triangle;
-        triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
-                            << QPoint( 25, -15 ) << QPoint( 0, 30 );
-
-        QPainterPath path;
-        path.addPolygon     ( triangle );
-        item.setPath        ( path );
-        items.push_back     ( item );
-    }
-
-    //кружочки
-    for( int i(0); i < 5; ++i )
-    {
-        Item item;
-        item.drawItem ( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
-                        25,
-                        QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
-                        QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
-                        QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
-
-        QPainterPath path;
-        path.addEllipse     ( -25, -25, 50, 50 );
-        item.setPath        ( path );
-        items.push_back     ( item );
-
     }
 }
 
 void Dialog::on_startButton_clicked()
 {
     ui->startButton->hide();
-
+    etimer->restart();
 }
 
 void Dialog::on_timeOut()
@@ -125,8 +105,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
         qDebug() << event->pos() << "не попал";
         for( int i(0); i < 3; ++i )
         {
-            Item item;
-            item.drawItem( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
+            Item item( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
                            25,
                            QPointF(1 + qrand() % 3, 1 + qrand() % 3),
                            QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
@@ -162,6 +141,8 @@ void Dialog::mousePressEvent(QMouseEvent *event)
     if( items.empty() )
     {
         this->noItems();
+        qDebug() << timeElapsed();
+
     }
 }
 
@@ -182,6 +163,21 @@ void Dialog::paintEvent( QPaintEvent *event )
     }
 
     Q_UNUSED( event );
+}
+
+QString Dialog::timeElapsed()
+{
+    qint64 res = etimer->elapsed();
+    qint64 sec = res / 1000;
+    qint64 min = sec / 60;
+    qint64 hr = min / 60;
+    sec %= 60;
+    min %= 60;
+
+    QString timeElapsed = QString("%1:%2:%3").arg(hr).arg(min).arg(sec);
+       //QString timeElapsed; QTextStream(&timeElapsed) << hr << ":" << min << ":" << sec;
+    return timeElapsed;
+
 }
 
 Dialog::~Dialog()

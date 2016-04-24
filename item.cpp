@@ -5,7 +5,7 @@
 #include <QtGui>
 #include <QPainter>
 
-void Item::drawItem( QPointF position, int radius, QPointF velocity, QColor pen, QColor fill )
+Item::Item( QPointF position, int radius, QPointF velocity, QColor pen, QColor fill )
 {
     setPosition    ( position );
     setRadius      ( radius );
