@@ -11,8 +11,6 @@ class Item
 {
 public:
 
-    Item( QPointF position, int radius, QPointF velocity, QColor pen, QColor fill );
-
     inline void setColorPen( QColor color )            { this->colorPen = color; }
     inline void setColorFill( QColor color )           { this->colorFill = color; }
     inline void setPosition( QPointF pos )             { this->position = pos; }

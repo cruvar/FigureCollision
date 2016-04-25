@@ -16,6 +16,7 @@ Dialog::Dialog(QWidget *parent) :
 
     connect( ui->startButton, SIGNAL(clicked(bool)), this->timer, SLOT(start()) );
     connect( ui->startButton, SIGNAL(clicked(bool)), this, SLOT(newGame()));
+
     connect( this, SIGNAL(noItems()), ui->startButton, SLOT(show()) );
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
@@ -28,11 +29,13 @@ void Dialog::newGame()
     etimer->start();
     for( int i(0); i < 15; ++i )
     {
-        Item item( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
-                        25,
-                        QPointF( 1 + qrand() % 3, 1 + qrand() % 3 ),
-                        QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
-                        QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ) );
+        Item item;
+        item.setRadius      ( 27 );
+        item.setPosition    ( QPointF(item.getRadius() + qrand() % (this->rect().width() - item.getRadius()*2),
+                                      item.getRadius() + qrand() % (this->rect().height() - item.getRadius()*2)));
+        item.setVelocity    ( QPointF( -3 + qrand() % 7, -3 + qrand() % 7 ) );
+        item.setColorFill   ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
+        item.setColorPen    ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
 
 
             if(i < 5)
@@ -73,11 +76,17 @@ void Dialog::on_timeOut()
         {
             item.setPosition( QPointF( item.getPosition().x() + item.getVelocity().x(), item.getPosition().y() + item.getVelocity().y() ) );
 
-            if( item.getPosition().x() > this->width() - item.getRadius() || item.getPosition().x() < item.getRadius() )
-                item.setVelocity( QPointF(item.getVelocity().x() * -1, item.getVelocity().y() ) );
+            if( item.getPosition().x() < item.getRadius() )
+                item.setVelocity( QPointF( fabs(item.getVelocity().x()) , item.getVelocity().y() ) );
 
-            if( item.getPosition().y() > this->height() - item.getRadius() || item.getPosition().y() < item.getRadius() )
-                item.setVelocity( QPointF(item.getVelocity().x(), item.getVelocity().y() * -1 ) );
+            if( item.getPosition().y() < item.getRadius() )
+                item.setVelocity( QPointF( item.getVelocity().x(),  fabs(item.getVelocity().y())) );
+
+            if( item.getPosition().x() >= this->width() - item.getRadius() )
+                item.setVelocity( QPointF( -fabs(item.getVelocity().x()) , item.getVelocity().y() ) );
+
+            if( item.getPosition().y() >= this->height() - item.getRadius()  )
+                item.setVelocity( QPointF( item.getVelocity().x(),  -fabs(item.getVelocity().y() )) );
 
         }
 
@@ -105,19 +114,21 @@ void Dialog::mousePressEvent(QMouseEvent *event)
         qDebug() << event->pos() << "не попал";
         for( int i(0); i < 3; ++i )
         {
-            Item item( QPointF(qrand() % this->rect().width(), qrand() % this->rect().height() ),
-                           25,
-                           QPointF(1 + qrand() % 3, 1 + qrand() % 3),
-                           QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 ),
-                           QColor(qrand() % 255, qrand() % 255, qrand() % 255, 255 )
-                           );
-            if(i < 1)
+            Item item;
+            item.setRadius      ( 27 );
+            item.setPosition    ( QPointF(item.getRadius() + qrand() % (this->rect().width() - item.getRadius()*2),
+                                          item.getRadius() + qrand() % (this->rect().height() - item.getRadius()*2)));
+            item.setVelocity    ( QPointF( -3 + qrand() % 7, -3 + qrand() % 7 ) );
+            item.setColorFill   ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
+            item.setColorPen    ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
+
+            if( i < 1 )
             {
                 QPainterPath path;
                 path.addRect    ( -25, -25, 50, 50 );
                 item.setPath    ( path );
             }
-            else if(i < 2)
+            else if( i < 2 )
             {
                 QPolygon triangle;
                 triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
@@ -138,6 +149,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
         qDebug() << items.size() << "итемов";
         update();
     }
+
     if( items.empty() )
     {
         this->noItems();
@@ -155,7 +167,6 @@ void Dialog::paintEvent( QPaintEvent *event )
     {
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.getPosition() );
-
         painter.setPen      ( { item.getColorPen(), 2 } );
         painter.fillPath    ( item.getPath(), item.getColorFill() );
         painter.drawPath    ( item.getPath() );
