@@ -8,6 +8,8 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+    ui->label->hide();
+    ui->label_2->hide();
 
     etimer = new QElapsedTimer();
 
@@ -15,9 +17,20 @@ Dialog::Dialog(QWidget *parent) :
     timer->setInterval( 15 );
 
     connect( ui->startButton, SIGNAL(clicked(bool)), this->timer, SLOT(start()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), this, SLOT(newGame()));
+    connect( ui->startButton, SIGNAL(clicked(bool)), this, SLOT(newGame()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_Elapsed_end, SLOT(hide()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_MaxItems_end, SLOT(hide()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label, SLOT(hide()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_2, SLOT(hide()) );
 
     connect( this, SIGNAL(noItems()), ui->startButton, SLOT(show()) );
+    connect( this, SIGNAL(noItems()), ui->label, SLOT(show()) );
+    connect( this, SIGNAL(noItems()), ui->label_Elapsed_end, SLOT(show()) );
+    connect( this, SIGNAL(noItems()), ui->label_MaxItems_end, SLOT(show()) );
+    connect( this, SIGNAL(noItems()), ui->label_Elapsed, SLOT(hide()) );
+    connect( this, SIGNAL(noItems()), ui->label_Items, SLOT(hide()) );
+    connect( this, SIGNAL(noItems()), ui->label_MaxItems, SLOT(hide()) );
+
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
     qsrand (QDateTime::currentMSecsSinceEpoch());
@@ -90,6 +103,9 @@ void Dialog::on_timeOut()
 
         }
 
+    ui->label_Elapsed->setText(timeElapsed());
+    ui->label_Items->setText(QString::number(items.size()));
+
     update();
 }
 
@@ -100,7 +116,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
     {
         if( item->getPath().contains(event->pos() - item->getPosition())&&event->button() == Qt::LeftButton )
         {
-            qDebug() << event->pos() << "ну ты и ловкач!";
+           // qDebug() << event->pos() << "ну ты и ловкач!";
             item->setColorFill(Qt::black);
             items.erase(item);
             hit = true;
@@ -111,7 +127,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
 
     if( !hit && !items.empty() )
     {
-        qDebug() << event->pos() << "не попал";
+       // qDebug() << event->pos() << "не попал";
         for( int i(0); i < 3; ++i )
         {
             Item item;
@@ -146,14 +162,15 @@ void Dialog::mousePressEvent(QMouseEvent *event)
             items.push_back(item);
         }
 
-        qDebug() << items.size() << "итемов";
+      //  qDebug() << items.size() << "итемов";
         update();
     }
 
     if( items.empty() )
     {
         this->noItems();
-        qDebug() << timeElapsed();
+        ui->label_Elapsed_end->setText( timeElapsed() );
+       // ui->label_MaxItems_end
 
     }
 }
@@ -162,6 +179,7 @@ void Dialog::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
     painter.setRenderHint( QPainter::Antialiasing );
+
 
     foreach( const Item & item,items )
     {
@@ -186,9 +204,8 @@ QString Dialog::timeElapsed()
     min %= 60;
 
     QString timeElapsed = QString("%1:%2:%3").arg(hr).arg(min).arg(sec);
-       //QString timeElapsed; QTextStream(&timeElapsed) << hr << ":" << min << ":" << sec;
-    return timeElapsed;
 
+    return timeElapsed;
 }
 
 Dialog::~Dialog()
