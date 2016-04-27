@@ -10,6 +10,8 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
     ui->label->hide();
     ui->label_2->hide();
+    ui->label_3->hide();
+    ui->label_4->hide();
 
     etimer = new QElapsedTimer();
 
@@ -22,6 +24,8 @@ Dialog::Dialog(QWidget *parent) :
     connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_MaxItems_end, SLOT(hide()) );
     connect( ui->startButton, SIGNAL(clicked(bool)), ui->label, SLOT(hide()) );
     connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_2, SLOT(hide()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_3, SLOT(show()) );
+    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_4, SLOT(show()) );
 
     connect( this, SIGNAL(noItems()), ui->startButton, SLOT(show()) );
     connect( this, SIGNAL(noItems()), ui->label, SLOT(show()) );
@@ -29,7 +33,8 @@ Dialog::Dialog(QWidget *parent) :
     connect( this, SIGNAL(noItems()), ui->label_MaxItems_end, SLOT(show()) );
     connect( this, SIGNAL(noItems()), ui->label_Elapsed, SLOT(hide()) );
     connect( this, SIGNAL(noItems()), ui->label_Items, SLOT(hide()) );
-    connect( this, SIGNAL(noItems()), ui->label_MaxItems, SLOT(hide()) );
+    connect( this, SIGNAL(noItems()), ui->label_3, SLOT(hide()) );
+    connect( this, SIGNAL(noItems()), ui->label_4, SLOT(hide()) );
 
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
@@ -116,7 +121,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
     {
         if( item->getPath().contains(event->pos() - item->getPosition())&&event->button() == Qt::LeftButton )
         {
-           // qDebug() << event->pos() << "ну ты и ловкач!";
+
             item->setColorFill(Qt::black);
             items.erase(item);
             hit = true;
@@ -127,7 +132,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
 
     if( !hit && !items.empty() )
     {
-       // qDebug() << event->pos() << "не попал";
+
         for( int i(0); i < 3; ++i )
         {
             Item item;
@@ -162,7 +167,6 @@ void Dialog::mousePressEvent(QMouseEvent *event)
             items.push_back(item);
         }
 
-      //  qDebug() << items.size() << "итемов";
         update();
     }
 
@@ -203,7 +207,8 @@ QString Dialog::timeElapsed()
     sec %= 60;
     min %= 60;
 
-    QString timeElapsed = QString("%1:%2:%3").arg(hr).arg(min).arg(sec);
+    //QString timeElapsed = QString("%1:%2:%3").arg(hr).arg(min).arg(sec);
+    QString timeElapsed; QTextStream(&timeElapsed) << hr << ":" << min << ":" << sec;
 
     return timeElapsed;
 }
