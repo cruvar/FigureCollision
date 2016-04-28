@@ -1,10 +1,11 @@
-#include "dialog.h"
+#include "gamewindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
+    qsrand (QDateTime::currentMSecsSinceEpoch());
     QApplication a(argc, argv);
-    Dialog w;
+    GameWindow w;
     w.show();
 
     return a.exec();

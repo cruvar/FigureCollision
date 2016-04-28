@@ -1,5 +1,5 @@
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef GAMEWINDOW_H
+#define GAMEWINDOW_H
 
 #include <vector>
 #include <QDialog>
@@ -10,14 +10,14 @@ namespace Ui {
 class Dialog;
 }
 
-class Dialog : public QDialog
+class GameWindow : public QDialog
 {
     Q_OBJECT
 
 public:
 
-    explicit Dialog(QWidget *parent = 0);
-    ~Dialog();
+    explicit GameWindow(QWidget *parent = 0);
+    ~GameWindow();
 
 
 private:
@@ -42,4 +42,4 @@ private slots:
 
 };
 
-#endif // DIALOG_H
+#endif // GAMEWINDOW_H

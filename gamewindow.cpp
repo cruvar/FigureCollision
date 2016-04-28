@@ -1,13 +1,15 @@
-#include "dialog.h"
+#include "gamewindow.h"
 #include "item.h"
 #include "ui_dialog.h"
 #include <QPainter>
 
-Dialog::Dialog(QWidget *parent) :
+GameWindow::GameWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+    setWindowTitle("Figures");
+
     ui->label->hide();
     ui->label_2->hide();
     ui->label_3->hide();
@@ -38,11 +40,11 @@ Dialog::Dialog(QWidget *parent) :
 
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
-    qsrand (QDateTime::currentMSecsSinceEpoch());
+
 
 }
 
-void Dialog::newGame()
+void GameWindow::newGame()
 {
     etimer->start();
     for( int i(0); i < 15; ++i )
@@ -82,13 +84,13 @@ void Dialog::newGame()
     }
 }
 
-void Dialog::on_startButton_clicked()
+void GameWindow::on_startButton_clicked()
 {
     ui->startButton->hide();
     etimer->restart();
 }
 
-void Dialog::on_timeOut()
+void GameWindow::on_timeOut()
 {
     for( Item & item:items )
         {
@@ -114,7 +116,7 @@ void Dialog::on_timeOut()
     update();
 }
 
-void Dialog::mousePressEvent(QMouseEvent *event)
+void GameWindow::mousePressEvent(QMouseEvent *event)
 {
     bool hit = false; //этот флаг хранит состояние попал\не попал
     for (auto item = begin(items); item != end(items); ++item)
@@ -179,7 +181,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void Dialog::paintEvent( QPaintEvent *event )
+void GameWindow::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
     painter.setRenderHint( QPainter::Antialiasing );
@@ -198,22 +200,21 @@ void Dialog::paintEvent( QPaintEvent *event )
     Q_UNUSED( event );
 }
 
-QString Dialog::timeElapsed()
+QString GameWindow::timeElapsed()
 {
     qint64 res = etimer->elapsed();
     qint64 sec = res / 1000;
     qint64 min = sec / 60;
-    qint64 hr = min / 60;
+
     sec %= 60;
     min %= 60;
 
-    //QString timeElapsed = QString("%1:%2:%3").arg(hr).arg(min).arg(sec);
-    QString timeElapsed; QTextStream(&timeElapsed) << hr << ":" << min << ":" << sec;
+    QString timeElapsed = QString("%1:%2").arg(min).arg(sec);
 
     return timeElapsed;
 }
 
-Dialog::~Dialog()
+GameWindow::~GameWindow()
 {
     delete ui;
 }
