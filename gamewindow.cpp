@@ -205,12 +205,9 @@ QString GameWindow::timeElapsed()
     qint64 res = etimer->elapsed();
     qint64 sec = res / 1000;
     qint64 min = sec / 60;
-
     sec %= 60;
     min %= 60;
-
-    QString timeElapsed = QString("%1:%2").arg(min).arg(sec);
-
+    QString timeElapsed = QString("%1:%2").arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
     return timeElapsed;
 }
 
