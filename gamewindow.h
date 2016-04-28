@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <QDialog>
+#include <QtCore>
+#include <QtGui>
 #include "item.h"
 
 

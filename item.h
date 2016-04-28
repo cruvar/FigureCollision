@@ -3,8 +3,6 @@
 
 #include <QDialog>
 #include <QtCore>
-#include <QtGui>
-#include <QPainter>
 
 
 class Item
@@ -22,8 +20,26 @@ public:
     inline const QColor & getColorFill() const  { return this->colorFill; }
     inline const QPointF & getPosition() const  { return this->position; }
     inline const QPainterPath & getPath() const { return this->path; }
-    inline int getRadius()                      { return this->radius; }
-    inline QPointF getVelocity()                { return this->velocity; }
+    inline const int getRadius()                { return this->radius; }
+    inline const QPointF getVelocity()          { return this->velocity; }
+
+    inline void generateRandomItem(int origin_x, int origin_y,
+                                   int limit_x, int limit_y,
+                                   int minVelocity, int maxVelocity)
+    {
+        setPosition    ( QPointF( origin_x + qrand() % limit_x,
+                                  origin_y + qrand() % limit_y ) );
+
+        setVelocity    ( QPointF( minVelocity + qrand() % maxVelocity,
+                                  minVelocity + qrand() % maxVelocity ) );
+    }
+
+
+    inline void generateRandomColor()
+    {
+        setColorFill   ( QColor( qrand() % 255, qrand() % 255, qrand() % 255 ));
+        setColorPen    ( QColor( qrand() % 255, qrand() % 255, qrand() % 255 ));
+    }
 
 
 private:

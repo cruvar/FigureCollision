@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    qsrand (QDateTime::currentMSecsSinceEpoch());
+
     QApplication a(argc, argv);
     GameWindow w;
     w.show();

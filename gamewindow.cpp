@@ -1,6 +1,6 @@
 #include "gamewindow.h"
 #include "item.h"
-#include "ui_dialog.h"
+#include "ui_gamewindow.h"
 #include <QPainter>
 
 GameWindow::GameWindow(QWidget *parent) :
@@ -9,6 +9,7 @@ GameWindow::GameWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Figures");
+    qsrand (QDateTime::currentMSecsSinceEpoch());
 
     ui->label->hide();
     ui->label_2->hide();
@@ -51,36 +52,28 @@ void GameWindow::newGame()
     {
         Item item;
         item.setRadius      ( 27 );
-        item.setPosition    ( QPointF(item.getRadius() + qrand() % (this->rect().width() - item.getRadius()*2),
-                                      item.getRadius() + qrand() % (this->rect().height() - item.getRadius()*2)));
-        item.setVelocity    ( QPointF( -3 + qrand() % 7, -3 + qrand() % 7 ) );
-        item.setColorFill   ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
-        item.setColorPen    ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
-
+        item.generateRandomItem( 0, 0, this->width(), this->height(), -3, 7 );
+        item.generateRandomColor();
+        QPainterPath path;
 
             if(i < 5)
             {
-                QPainterPath path;
                 path.addRect    ( -25, -25, 50, 50 );
-                item.setPath    ( path );
             }
             else if(i < 10)
             {
                 QPolygon triangle;
                 triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
                                     << QPoint( 25, -15 ) << QPoint( 0, 30 );
-                QPainterPath path;
                 path.addPolygon     ( triangle );
-                item.setPath        ( path );
             }
             else
             {
-                QPainterPath path;
                 path.addEllipse     ( -25, -25, 50, 50 );
-                item.setPath        ( path );
             }
 
-        items.push_back ( item );
+        item.setPath        ( path );
+        items.push_back     ( item );
     }
 }
 
@@ -139,34 +132,27 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
         {
             Item item;
             item.setRadius      ( 27 );
-            item.setPosition    ( QPointF(item.getRadius() + qrand() % (this->rect().width() - item.getRadius()*2),
-                                          item.getRadius() + qrand() % (this->rect().height() - item.getRadius()*2)));
-            item.setVelocity    ( QPointF( -3 + qrand() % 7, -3 + qrand() % 7 ) );
-            item.setColorFill   ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
-            item.setColorPen    ( QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 ));
+            item.generateRandomItem( 0, 0, this->width(), this->height(), -3, 7 );
+            item.generateRandomColor();
+            QPainterPath path;
 
             if( i < 1 )
             {
-                QPainterPath path;
                 path.addRect    ( -25, -25, 50, 50 );
-                item.setPath    ( path );
             }
             else if( i < 2 )
             {
                 QPolygon triangle;
                 triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
                                     << QPoint( 25, -15 ) << QPoint( 0, 30 );
-                QPainterPath path;
                 path.addPolygon     ( triangle );
-                item.setPath        ( path );
             }
             else
             {
-                QPainterPath path;
                 path.addEllipse     ( -25, -25, 50, 50 );
-                item.setPath        ( path );
             }
-            items.push_back(item);
+            item.setPath        ( path );
+            items.push_back     ( item );
         }
 
         update();

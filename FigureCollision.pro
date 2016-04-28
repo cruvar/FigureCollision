@@ -20,6 +20,7 @@ HEADERS  += \
     item.h \
     gamewindow.h
 
-FORMS    += dialog.ui
+FORMS    += \
+    gamewindow.ui
 
 CONFIG += c++11
