@@ -41,8 +41,21 @@ GameWindow::GameWindow(QWidget *parent) :
 
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
+}
 
+void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int max_y, int minVelocity, int maxVelocity )
+{
+    int velocity;
+    if (rand() % 2)
+        velocity = -random(abs(minVelocity), abs(maxVelocity));
+    else
+        velocity = random(abs(minVelocity), abs(maxVelocity));
 
+    item.setPosition    ( QPointF( random( min_x, max_x),
+                                   random( min_y, max_y) ));
+    item.setVelocity    ( QPointF( velocity, velocity ));
+    item.setColorFill   ( QColor( random( 0, 255), random( 0, 255), random( 0, 255) ));
+    item.setColorPen    ( QColor( random( 0, 255), random( 0, 255), random( 0, 255) ));
 }
 
 void GameWindow::newGame()
@@ -52,8 +65,8 @@ void GameWindow::newGame()
     {
         Item item;
         item.setRadius      ( 27 );
-        item.generateRandomItem( 0, 0, this->width(), this->height(), -3, 7 );
-        item.generateRandomColor();
+        randomizeItem( item, 0, 0, this->width(), this->height(), 1, 4 );
+
         QPainterPath path;
 
             if(i < 5)
@@ -132,8 +145,8 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
         {
             Item item;
             item.setRadius      ( 27 );
-            item.generateRandomItem( 0, 0, this->width(), this->height(), -3, 7 );
-            item.generateRandomColor();
+            randomizeItem( item, 0, 0, this->width(), this->height(), 1, 4 );
+
             QPainterPath path;
 
             if( i < 1 )
@@ -162,8 +175,6 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
     {
         this->noItems();
         ui->label_Elapsed_end->setText( timeElapsed() );
-       // ui->label_MaxItems_end
-
     }
 }
 
@@ -197,10 +208,19 @@ QString GameWindow::timeElapsed()
     return timeElapsed;
 }
 
+int GameWindow::random(int min, int max)
+{
+    return min + rand() % (max - min);
+}
+
 GameWindow::~GameWindow()
 {
     delete ui;
 }
+
+
+
+
 
 
 

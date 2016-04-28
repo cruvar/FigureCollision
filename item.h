@@ -23,25 +23,6 @@ public:
     inline const int getRadius()                { return this->radius; }
     inline const QPointF getVelocity()          { return this->velocity; }
 
-    inline void generateRandomItem(int origin_x, int origin_y,
-                                   int limit_x, int limit_y,
-                                   int minVelocity, int maxVelocity)
-    {
-        setPosition    ( QPointF( origin_x + qrand() % limit_x,
-                                  origin_y + qrand() % limit_y ) );
-
-        setVelocity    ( QPointF( minVelocity + qrand() % maxVelocity,
-                                  minVelocity + qrand() % maxVelocity ) );
-    }
-
-
-    inline void generateRandomColor()
-    {
-        setColorFill   ( QColor( qrand() % 255, qrand() % 255, qrand() % 255 ));
-        setColorPen    ( QColor( qrand() % 255, qrand() % 255, qrand() % 255 ));
-    }
-
-
 private:
 
     QPainterPath path;
