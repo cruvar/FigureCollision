@@ -13,7 +13,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    item.cpp \
     gamewindow.cpp
 
 HEADERS  += \

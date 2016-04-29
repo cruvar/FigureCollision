@@ -21,20 +21,18 @@ public:
     explicit GameWindow(QWidget *parent = 0);
     ~GameWindow();
 
-
-
 private:
     Ui::Dialog *ui;
     Item *myitem;
     QTimer *timer;
     QElapsedTimer *etimer;
 
-    inline int random(int min, int max);
+    inline int random(int min, int max) { return min + rand() % (max - min); }
 
-    inline void randomizeItem    ( Item & item,
-                                   int min_x, int min_y,
-                                   int max_x, int max_y,
-                                   int minVelocity, int maxVelocity );
+    inline void randomizeItem           ( Item & item,
+                                          int min_x, int min_y,
+                                          int max_x, int max_y,
+                                          int minVelocity, int maxVelocity );
 
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent * event);
@@ -42,11 +40,13 @@ private:
 
     std::vector<Item> items;
 
+
 signals:
     void noItems();
 
 private slots:
     void newGame();
+    void endGame();
     void on_timeOut();
     void on_startButton_clicked();
 

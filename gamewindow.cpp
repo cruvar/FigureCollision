@@ -17,27 +17,12 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->label_4->hide();
 
     etimer = new QElapsedTimer();
+    etimer->start();
 
     timer = new QTimer(this);
     timer->setInterval( 15 );
 
-    connect( ui->startButton, SIGNAL(clicked(bool)), this->timer, SLOT(start()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), this, SLOT(newGame()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_Elapsed_end, SLOT(hide()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_MaxItems_end, SLOT(hide()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label, SLOT(hide()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_2, SLOT(hide()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_3, SLOT(show()) );
-    connect( ui->startButton, SIGNAL(clicked(bool)), ui->label_4, SLOT(show()) );
 
-    connect( this, SIGNAL(noItems()), ui->startButton, SLOT(show()) );
-    connect( this, SIGNAL(noItems()), ui->label, SLOT(show()) );
-    connect( this, SIGNAL(noItems()), ui->label_Elapsed_end, SLOT(show()) );
-    connect( this, SIGNAL(noItems()), ui->label_MaxItems_end, SLOT(show()) );
-    connect( this, SIGNAL(noItems()), ui->label_Elapsed, SLOT(hide()) );
-    connect( this, SIGNAL(noItems()), ui->label_Items, SLOT(hide()) );
-    connect( this, SIGNAL(noItems()), ui->label_3, SLOT(hide()) );
-    connect( this, SIGNAL(noItems()), ui->label_4, SLOT(hide()) );
 
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
@@ -51,8 +36,7 @@ void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int
     else
         velocity = random(abs(minVelocity), abs(maxVelocity));
 
-    item.setPosition    ( QPointF( random( min_x, max_x),
-                                   random( min_y, max_y) ));
+    item.setPosition    ( QPointF( random( min_x, max_x), random( min_y, max_y) ));
     item.setVelocity    ( QPointF( velocity, velocity ));
     item.setColorFill   ( QColor( random( 0, 255), random( 0, 255), random( 0, 255) ));
     item.setColorPen    ( QColor( random( 0, 255), random( 0, 255), random( 0, 255) ));
@@ -60,12 +44,22 @@ void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int
 
 void GameWindow::newGame()
 {
-    etimer->start();
+    ui->startButton->hide();
+    ui->label_Elapsed_end->hide();
+    ui->label_MaxItems_end->hide();
+    ui->label->hide();
+    ui->label_2->hide();
+    ui->label_3->show();
+    ui->label_4->show();
+    timer->start();
+    etimer->restart();
+
+
     for( int i(0); i < 15; ++i )
     {
         Item item;
-        item.setRadius      ( 27 );
-        randomizeItem( item, 0, 0, this->width(), this->height(), 1, 4 );
+        item.setRadius  ( 27 );
+        randomizeItem   ( item, 0, 0, this->width(), this->height(), 1, 4 );
 
         QPainterPath path;
 
@@ -90,10 +84,23 @@ void GameWindow::newGame()
     }
 }
 
+void GameWindow::endGame()
+{
+    ui->startButton->show();
+    ui->label->show();
+    ui->label_Elapsed_end->show();
+    ui->label_MaxItems_end->show();
+    ui->label_Elapsed->hide();
+    ui->label_Items->hide();
+    ui->label_3->hide();
+    ui->label_4->hide();
+    ui->label_Elapsed_end->setText( timeElapsed() );
+}
+
 void GameWindow::on_startButton_clicked()
 {
-    ui->startButton->hide();
-    etimer->restart();
+    this->newGame();
+
 }
 
 void GameWindow::on_timeOut()
@@ -113,7 +120,6 @@ void GameWindow::on_timeOut()
 
             if( item.getPosition().y() >= this->height() - item.getRadius()  )
                 item.setVelocity( QPointF( item.getVelocity().x(),  -fabs(item.getVelocity().y() )) );
-
         }
 
     ui->label_Elapsed->setText(timeElapsed());
@@ -140,12 +146,11 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
 
     if( !hit && !items.empty() )
     {
-
         for( int i(0); i < 3; ++i )
         {
             Item item;
-            item.setRadius      ( 27 );
-            randomizeItem( item, 0, 0, this->width(), this->height(), 1, 4 );
+            item.setRadius  ( 27 );
+            randomizeItem   ( item, 0, 0, this->width(), this->height(), 1, 4 );
 
             QPainterPath path;
 
@@ -173,8 +178,8 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
 
     if( items.empty() )
     {
-        this->noItems();
-        ui->label_Elapsed_end->setText( timeElapsed() );
+        this->endGame();
+
     }
 }
 
@@ -208,10 +213,6 @@ QString GameWindow::timeElapsed()
     return timeElapsed;
 }
 
-int GameWindow::random(int min, int max)
-{
-    return min + rand() % (max - min);
-}
 
 GameWindow::~GameWindow()
 {
