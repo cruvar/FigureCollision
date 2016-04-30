@@ -23,7 +23,6 @@ public:
 
 private:
     Ui::Dialog *ui;
-    Item *myitem;
     QTimer *timer;
     QElapsedTimer *etimer;
 
