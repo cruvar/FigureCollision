@@ -36,10 +36,10 @@ void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int
     else
         velocity = random(abs(minVelocity), abs(maxVelocity));
 
-    item.setPosition    ( QPointF( random( min_x, max_x), random( min_y, max_y) ));
-    item.setVelocity    ( QPointF( velocity, velocity ));
-    item.setColorFill   ( QColor( random( 0, 255), random( 0, 255), random( 0, 255) ));
-    item.setColorPen    ( QColor( random( 0, 255), random( 0, 255), random( 0, 255) ));
+    item.position = QPointF( random( min_x, max_x), random( min_y, max_y) );
+    item.velocity = QPointF( velocity, velocity );
+    item.colorFill = QColor( random( 0, 255), random( 0, 255), random( 0, 255) );
+    item.colorPen = QColor( random( 0, 255), random( 0, 255), random( 0, 255) );
 }
 
 void GameWindow::newGame()
@@ -58,28 +58,25 @@ void GameWindow::newGame()
     for( int i(0); i < 15; ++i )
     {
         Item item;
-        item.setRadius  ( 27 );
+        item.radius = 27;
         randomizeItem   ( item, 0, 0, this->width(), this->height(), 1, 4 );
 
-        QPainterPath path;
+        if(i < 5)
+        {
+            item.path.addRect    ( -25, -25, 50, 50 );
+        }
+        else if(i < 10)
+        {
+            QPolygon triangle;
+            triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
+                                << QPoint( 25, -15 ) << QPoint( 0, 30 );
+            item.path.addPolygon     ( triangle );
+        }
+        else
+        {
+            item.path.addEllipse     ( -25, -25, 50, 50 );
+        }
 
-            if(i < 5)
-            {
-                path.addRect    ( -25, -25, 50, 50 );
-            }
-            else if(i < 10)
-            {
-                QPolygon triangle;
-                triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
-                                    << QPoint( 25, -15 ) << QPoint( 0, 30 );
-                path.addPolygon     ( triangle );
-            }
-            else
-            {
-                path.addEllipse     ( -25, -25, 50, 50 );
-            }
-
-        item.setPath        ( path );
         items.push_back     ( item );
     }
 }
@@ -106,21 +103,21 @@ void GameWindow::on_startButton_clicked()
 void GameWindow::on_timeOut()
 {
     for( Item & item:items )
-        {
-            item.setPosition( QPointF( item.getPosition().x() + item.getVelocity().x(), item.getPosition().y() + item.getVelocity().y() ) );
+    {
+        item.position += item.velocity;
 
-            if( item.getPosition().x() < item.getRadius() )
-                item.setVelocity( QPointF( fabs(item.getVelocity().x()) , item.getVelocity().y() ) );
+        if( item.position.x() < item.radius )
+            item.velocity.rx() = fabs(item.velocity.x());
 
-            if( item.getPosition().y() < item.getRadius() )
-                item.setVelocity( QPointF( item.getVelocity().x(),  fabs(item.getVelocity().y())) );
+        if( item.position.y() < item.radius )
+            item.velocity.ry() = fabs(item.velocity.y());
 
-            if( item.getPosition().x() >= this->width() - item.getRadius() )
-                item.setVelocity( QPointF( -fabs(item.getVelocity().x()) , item.getVelocity().y() ) );
+        if( item.position.x() >= this->width() - item.radius )
+            item.velocity.rx() = -fabs(item.velocity.x());
 
-            if( item.getPosition().y() >= this->height() - item.getRadius()  )
-                item.setVelocity( QPointF( item.getVelocity().x(),  -fabs(item.getVelocity().y() )) );
-        }
+        if( item.position.y() >= this->height() - item.radius  )
+            item.velocity.ry() = -fabs(item.velocity.y());
+    }
 
     ui->label_Elapsed->setText(timeElapsed());
     ui->label_Items->setText(QString::number(items.size()));
@@ -133,10 +130,10 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
     bool hit = false; //этот флаг хранит состояние попал\не попал
     for (auto item = begin(items); item != end(items); ++item)
     {
-        if( item->getPath().contains(event->pos() - item->getPosition())&&event->button() == Qt::LeftButton )
+        if( item->path.contains(event->pos() - item->position)&&event->button() == Qt::LeftButton )
         {
 
-            item->setColorFill(Qt::black);
+            item->colorFill = Qt::black;
             items.erase(item);
             hit = true;
             update();
@@ -149,27 +146,25 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
         for( int i(0); i < 3; ++i )
         {
             Item item;
-            item.setRadius  ( 27 );
+            item.radius = 27;
             randomizeItem   ( item, 0, 0, this->width(), this->height(), 1, 4 );
-
-            QPainterPath path;
 
             if( i < 1 )
             {
-                path.addRect    ( -25, -25, 50, 50 );
+                item.path.addRect    ( -25, -25, 50, 50 );
             }
             else if( i < 2 )
             {
                 QPolygon triangle;
                 triangle            << QPoint( 0, 30 ) << QPoint( -25, -15 )
                                     << QPoint( 25, -15 ) << QPoint( 0, 30 );
-                path.addPolygon     ( triangle );
+                item.path.addPolygon     ( triangle );
             }
             else
             {
-                path.addEllipse     ( -25, -25, 50, 50 );
+                item.path.addEllipse     ( -25, -25, 50, 50 );
             }
-            item.setPath        ( path );
+
             items.push_back     ( item );
         }
 
@@ -192,10 +187,10 @@ void GameWindow::paintEvent( QPaintEvent *event )
     foreach( const Item & item,items )
     {
         painter.save();     // сохранили состояние пеинтера
-        painter.translate   ( item.getPosition() );
-        painter.setPen      ( { item.getColorPen(), 2 } );
-        painter.fillPath    ( item.getPath(), item.getColorFill() );
-        painter.drawPath    ( item.getPath() );
+        painter.translate   ( item.position );
+        painter.setPen      ( { item.colorPen, 2 } );
+        painter.fillPath    ( item.path, item.colorFill );
+        painter.drawPath    ( item.path );
         painter.restore();  // вернули в прежнее состояние
     }
 
