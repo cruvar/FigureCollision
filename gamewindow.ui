@@ -37,7 +37,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="time_spent_label">
         <property name="font">
          <font>
           <pointsize>18</pointsize>
@@ -61,7 +61,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="max_figures_label">
         <property name="font">
          <font>
           <pointsize>18</pointsize>
@@ -110,7 +110,7 @@
        </spacer>
       </item>
       <item row="1" column="2">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="figures_in_game_label">
         <property name="font">
          <font>
           <pointsize>18</pointsize>
@@ -128,7 +128,7 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="time_in_game_label">
         <property name="font">
          <font>
           <pointsize>18</pointsize>

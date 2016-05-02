@@ -11,10 +11,10 @@ GameWindow::GameWindow(QWidget *parent) :
     setWindowTitle("Figures");
     qsrand (QDateTime::currentMSecsSinceEpoch());
 
-    ui->label->hide();
-    ui->label_2->hide();
-    ui->label_3->hide();
-    ui->label_4->hide();
+    ui->time_spent_label->hide();
+    ui->max_figures_label->hide();
+    ui->time_in_game_label->hide();
+    ui->figures_in_game_label->hide();
 
     etimer = new QElapsedTimer();
     etimer->start();
@@ -45,12 +45,17 @@ void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int
 void GameWindow::newGame()
 {
     ui->startButton->hide();
+
+    ui->label_Elapsed->show();
+    ui->label_Items->show();
     ui->label_Elapsed_end->hide();
     ui->label_MaxItems_end->hide();
-    ui->label->hide();
-    ui->label_2->hide();
-    ui->label_3->show();
-    ui->label_4->show();
+
+    ui->time_spent_label->hide();
+    ui->max_figures_label->hide();
+    ui->time_in_game_label->show();
+    ui->figures_in_game_label->show();
+
     timer->start();
     etimer->restart();
 
@@ -84,14 +89,19 @@ void GameWindow::newGame()
 void GameWindow::endGame()
 {
     ui->startButton->show();
-    ui->label->show();
+
     ui->label_Elapsed_end->show();
     ui->label_MaxItems_end->show();
     ui->label_Elapsed->hide();
     ui->label_Items->hide();
-    ui->label_3->hide();
-    ui->label_4->hide();
+
+    ui->time_spent_label->show();
+    ui->time_in_game_label->hide();
+    ui->figures_in_game_label->hide();
+
     ui->label_Elapsed_end->setText( timeElapsed() );
+    ui->startButton->setText("Хочу еще!");
+    timer->stop();
 }
 
 void GameWindow::on_startButton_clicked()
@@ -117,10 +127,23 @@ void GameWindow::on_timeOut()
 
         if( item.position.y() >= this->height() - item.radius  )
             item.velocity.ry() = -fabs(item.velocity.y());
+
+
     }
 
     ui->label_Elapsed->setText(timeElapsed());
     ui->label_Items->setText(QString::number(items.size()));
+
+    if( items.empty() )
+    {
+        this->endGame();
+    }
+
+    if( items.size() >= 30)
+    {
+        items.clear();
+        this->endGame();
+    }
 
     update();
 }
@@ -133,7 +156,6 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
         if( item->path.contains(event->pos() - item->position)&&event->button() == Qt::LeftButton )
         {
 
-            item->colorFill = Qt::black;
             items.erase(item);
             hit = true;
             update();
@@ -171,11 +193,7 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
         update();
     }
 
-    if( items.empty() )
-    {
-        this->endGame();
 
-    }
 }
 
 void GameWindow::paintEvent( QPaintEvent *event )
