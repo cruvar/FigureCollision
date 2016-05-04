@@ -11,10 +11,9 @@ GameWindow::GameWindow(QWidget *parent) :
     setWindowTitle("Figures");
     qsrand (QDateTime::currentMSecsSinceEpoch());
 
-    ui->time_spent_label->hide();
-    ui->max_figures_label->hide();
-    ui->time_in_game_label->hide();
-    ui->figures_in_game_label->hide();
+    ui->in_Game_frame->hide();
+    ui->win_Game_frame->hide();
+    ui->record_frame->hide();
 
     etimer = new QElapsedTimer();
     etimer->start();
@@ -46,15 +45,8 @@ void GameWindow::newGame()
 {
     ui->startButton->hide();
 
-    ui->label_Elapsed->show();
-    ui->label_Items->show();
-    ui->label_Elapsed_end->hide();
-    ui->label_MaxItems_end->hide();
-
-    ui->time_spent_label->hide();
-    ui->max_figures_label->hide();
-    ui->time_in_game_label->show();
-    ui->figures_in_game_label->show();
+    ui->in_Game_frame->show();
+    ui->win_Game_frame->hide();
 
     timer->start();
     etimer->restart();
@@ -90,16 +82,11 @@ void GameWindow::endGame()
 {
     ui->startButton->show();
 
-    ui->label_Elapsed_end->show();
-    ui->label_MaxItems_end->show();
-    ui->label_Elapsed->hide();
-    ui->label_Items->hide();
-
-    ui->time_spent_label->show();
-    ui->time_in_game_label->hide();
-    ui->figures_in_game_label->hide();
+    ui->in_Game_frame->hide();
+    ui->win_Game_frame->show();
 
     ui->label_Elapsed_end->setText( timeElapsed() );
+    ui->label_mousepress_end->setText( QString::number( mousePressCount ) );
     ui->startButton->setText("Хочу еще!");
     timer->stop();
 }
@@ -150,6 +137,8 @@ void GameWindow::on_timeOut()
 
 void GameWindow::mousePressEvent(QMouseEvent *event)
 {
+    mousePressCount++;
+
     bool hit = false; //этот флаг хранит состояние попал\не попал
     for (auto item = begin(items); item != end(items); ++item)
     {

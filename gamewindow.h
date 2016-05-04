@@ -25,6 +25,7 @@ private:
     Ui::Dialog *ui;
     QTimer *timer;
     QElapsedTimer *etimer;
+    int mousePressCount = 0;
 
     inline int random(int min, int max) { return min + rand() % (max - min); }
 
