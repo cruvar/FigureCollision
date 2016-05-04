@@ -13,13 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    gamewindow.cpp
+    gamewindow.cpp \
+    recordswindow.cpp
 
 HEADERS  += \
     item.h \
-    gamewindow.h
+    gamewindow.h \
+    recordswindow.h
 
 FORMS    += \
-    gamewindow.ui
+    gamewindow.ui \
+    recordswindow.ui
 
 CONFIG += c++11

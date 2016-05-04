@@ -6,6 +6,8 @@
 #include <QtCore>
 #include <QtGui>
 #include "item.h"
+#include "recordswindow.h"
+
 
 
 namespace Ui {
@@ -23,6 +25,7 @@ public:
 
 private:
     Ui::Dialog *ui;
+    RecordsWindow *records;
     QTimer *timer;
     QElapsedTimer *etimer;
     int mousePressCount = 0;
@@ -49,7 +52,7 @@ private slots:
     void endGame();
     void on_timeOut();
     void on_startButton_clicked();
-
+    void on_recordsButton_clicked();
 };
 
 #endif // GAMEWINDOW_H

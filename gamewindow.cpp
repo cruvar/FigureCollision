@@ -1,6 +1,7 @@
 #include "gamewindow.h"
 #include "item.h"
 #include "ui_gamewindow.h"
+#include "recordswindow.h"
 #include <QPainter>
 
 GameWindow::GameWindow(QWidget *parent) :
@@ -10,17 +11,18 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Figures");
     qsrand (QDateTime::currentMSecsSinceEpoch());
+    records = new RecordsWindow();
 
     ui->in_Game_frame->hide();
     ui->win_Game_frame->hide();
     ui->record_frame->hide();
+
 
     etimer = new QElapsedTimer();
     etimer->start();
 
     timer = new QTimer(this);
     timer->setInterval( 15 );
-
 
 
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
@@ -47,6 +49,7 @@ void GameWindow::newGame()
 
     ui->in_Game_frame->show();
     ui->win_Game_frame->hide();
+    ui->record_frame->hide();
 
     timer->start();
     etimer->restart();
@@ -84,6 +87,7 @@ void GameWindow::endGame()
 
     ui->in_Game_frame->hide();
     ui->win_Game_frame->show();
+    ui->record_frame->show();
 
     ui->label_Elapsed_end->setText( timeElapsed() );
     ui->label_mousepress_end->setText( QString::number( mousePressCount ) );
@@ -96,6 +100,12 @@ void GameWindow::on_startButton_clicked()
     this->newGame();
 
 }
+
+void GameWindow::on_recordsButton_clicked()
+{
+    records->show();
+}
+
 
 void GameWindow::on_timeOut()
 {
@@ -220,12 +230,3 @@ GameWindow::~GameWindow()
 {
     delete ui;
 }
-
-
-
-
-
-
-
-
-
