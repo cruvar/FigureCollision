@@ -29,6 +29,9 @@ private:
     QTimer *timer;
     QElapsedTimer *etimer;
     int mousePressCount = 0;
+    int maxItems = 50;
+
+    inline float percentItems(int percent){ return ( maxItems / 100.0 ) * percent; }
 
     inline int random(int min, int max) { return min + rand() % (max - min); }
 
@@ -49,7 +52,8 @@ signals:
 
 private slots:
     void newGame();
-    void endGame();
+    void winGame();
+    void lossGame();
     void on_timeOut();
     void on_startButton_clicked();
     void on_recordsButton_clicked();

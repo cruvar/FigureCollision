@@ -54,6 +54,7 @@ void GameWindow::newGame()
     timer->start();
     etimer->restart();
 
+    this->mousePressCount = 0;
 
     for( int i(0); i < 15; ++i )
     {
@@ -81,7 +82,7 @@ void GameWindow::newGame()
     }
 }
 
-void GameWindow::endGame()
+void GameWindow::winGame()
 {
     ui->startButton->show();
 
@@ -89,9 +90,24 @@ void GameWindow::endGame()
     ui->win_Game_frame->show();
     ui->record_frame->show();
 
+    ui->verdict_label->setText("Красава!");
     ui->label_Elapsed_end->setText( timeElapsed() );
     ui->label_mousepress_end->setText( QString::number( mousePressCount ) );
     ui->startButton->setText("Хочу еще!");
+    timer->stop();
+}
+
+void GameWindow::lossGame()
+{
+    ui->startButton->show();
+
+    ui->in_Game_frame->hide();
+    ui->win_Game_frame->show();
+
+    ui->verdict_label->setText("Фу, лох!");
+    ui->label_Elapsed_end->setText( timeElapsed() );
+    ui->label_mousepress_end->setText( QString::number( mousePressCount ) );
+    ui->startButton->setText("Отомстить!");
     timer->stop();
 }
 
@@ -130,16 +146,28 @@ void GameWindow::on_timeOut()
 
     ui->label_Elapsed->setText(timeElapsed());
     ui->label_Items->setText(QString::number(items.size()));
+    QPalette p = ui->label_Items->palette();
+
+    if ( items.size() > this->percentItems( 75 ) )
+    {
+        p.setColor(QPalette::WindowText, Qt::red);
+        ui->label_Items->setPalette(p);
+    }
+    else
+    {
+        p.setColor(QPalette::WindowText, Qt::black);
+        ui->label_Items->setPalette(p);
+    }
 
     if( items.empty() )
     {
-        this->endGame();
+        this->winGame();
     }
 
-    if( items.size() >= 30)
+    if( items.size() > this->maxItems )
     {
         items.clear();
-        this->endGame();
+        this->lossGame();
     }
 
     update();
@@ -154,7 +182,6 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
     {
         if( item->path.contains(event->pos() - item->position)&&event->button() == Qt::LeftButton )
         {
-
             items.erase(item);
             hit = true;
             update();
