@@ -6,6 +6,7 @@
 #include <QtCore>
 #include <QtGui>
 #include "item.h"
+#include "record.h"
 #include "recordswindow.h"
 
 namespace Ui {
@@ -23,7 +24,7 @@ public:
 
 private:
     Ui::Dialog *ui;
-    RecordsWindow *records;
+    RecordsWindow *recordswindow;
     QTimer *timer;
     QElapsedTimer *etimer;
 
@@ -46,6 +47,7 @@ private:
     void paintEvent(QPaintEvent * event);    
 
     std::vector<Item> items;
+    std::vector<Record> records;
 
 signals:
 
@@ -56,6 +58,7 @@ private slots:
     void on_timeOut();
     void on_startButton_clicked();
     void on_recordsButton_clicked();
+    void on_add_name_Button_clicked();
 };
 
 #endif // GAMEWINDOW_H

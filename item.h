@@ -13,7 +13,6 @@ struct Item
     QColor colorFill;
     QPointF position;
     QPointF velocity;
-
     int radius;
 };
 

@@ -1,5 +1,4 @@
 #include "gamewindow.h"
-
 #include "item.h"
 #include "ui_gamewindow.h"
 #include <QPainter>
@@ -11,11 +10,12 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Figures");
     qsrand (QDateTime::currentMSecsSinceEpoch());
-    records = new RecordsWindow();
+    recordswindow = new RecordsWindow();
 
     ui->in_Game_frame->hide();
     ui->end_Game_frame->hide();
     ui->record_frame->show();
+    ui->add_record_frame->hide();
 
     etimer = new QElapsedTimer();
     etimer->start();
@@ -48,6 +48,7 @@ void GameWindow::newGame()
     ui->in_Game_frame->show();
     ui->end_Game_frame->hide();
     ui->record_frame->hide();
+    ui->add_record_frame->hide();
 
     timer->start();
     etimer->restart();
@@ -87,6 +88,7 @@ void GameWindow::winGame()
     ui->in_Game_frame->hide();
     ui->end_Game_frame->show();
     ui->record_frame->show();
+    ui->add_record_frame->show();
 
     this->setRecordTime(this->timeElapsed());
 
@@ -107,21 +109,30 @@ void GameWindow::lossGame()
     ui->verdict_label->setText("Фу, лох!");
     ui->label_Elapsed_end->setText( timeElapsed() );
     ui->label_mousepress_end->setText( QString::number( clickCount ) );
-    ui->startButton->setText("Отомстить!");
+    ui->startButton->setText("Отомстить");
     timer->stop();
 }
 
 void GameWindow::on_startButton_clicked()
 {
     this->newGame();
-
 }
 
 void GameWindow::on_recordsButton_clicked()
 {
-    records->show();
+    recordswindow->show();
+
 }
 
+void GameWindow::on_add_name_Button_clicked()
+{
+    Record record;
+    record.name = ui->add_name_lineEdit->text();
+    record.time = this->recordTime;
+    record.clicks = this->clickCount;
+    records.push_back(record);
+    qDebug() << record.name;
+}
 
 void GameWindow::on_timeOut()
 {
@@ -140,8 +151,6 @@ void GameWindow::on_timeOut()
 
         if( item.position.y() >= this->height() - item.radius  )
             item.velocity.ry() = -fabs(item.velocity.y());
-
-
     }
 
     ui->label_Elapsed->setText(timeElapsed());
@@ -169,7 +178,6 @@ void GameWindow::on_timeOut()
         items.clear();
         this->lossGame();
     }
-
     update();
 }
 
@@ -212,14 +220,10 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
             {
                 item.path.addEllipse     ( -25, -25, 50, 50 );
             }
-
             items.push_back     ( item );
         }
-
         update();
     }
-
-
 }
 
 void GameWindow::paintEvent( QPaintEvent *event )
@@ -232,7 +236,7 @@ void GameWindow::paintEvent( QPaintEvent *event )
     {
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.position );
-        painter.setPen      ( { item.colorPen, 3 } );
+        painter.setPen      ( { item.colorPen, 2 } );
         painter.fillPath    ( item.path, item.colorFill );
         painter.drawPath    ( item.path );
         painter.restore();  // вернули в прежнее состояние
@@ -257,3 +261,5 @@ GameWindow::~GameWindow()
 {
     delete ui;
 }
+
+

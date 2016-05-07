@@ -19,10 +19,16 @@ SOURCES += main.cpp\
 HEADERS  += \
     item.h \
     gamewindow.h \
-    recordswindow.h
+    recordswindow.h \
+    record.h
 
 FORMS    += \
     gamewindow.ui \
     recordswindow.ui
 
 CONFIG += c++11
+
+DISTFILES +=
+
+RESOURCES += \
+    fonts.qrc
