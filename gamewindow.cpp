@@ -1,7 +1,7 @@
 #include "gamewindow.h"
+
 #include "item.h"
 #include "ui_gamewindow.h"
-#include "recordswindow.h"
 #include <QPainter>
 
 GameWindow::GameWindow(QWidget *parent) :
@@ -14,16 +14,14 @@ GameWindow::GameWindow(QWidget *parent) :
     records = new RecordsWindow();
 
     ui->in_Game_frame->hide();
-    ui->win_Game_frame->hide();
-    ui->record_frame->hide();
-
+    ui->end_Game_frame->hide();
+    ui->record_frame->show();
 
     etimer = new QElapsedTimer();
     etimer->start();
 
     timer = new QTimer(this);
     timer->setInterval( 15 );
-
 
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
@@ -48,13 +46,13 @@ void GameWindow::newGame()
     ui->startButton->hide();
 
     ui->in_Game_frame->show();
-    ui->win_Game_frame->hide();
+    ui->end_Game_frame->hide();
     ui->record_frame->hide();
 
     timer->start();
     etimer->restart();
 
-    this->mousePressCount = 0;
+    this->clickCount = 0;
 
     for( int i(0); i < 15; ++i )
     {
@@ -87,12 +85,14 @@ void GameWindow::winGame()
     ui->startButton->show();
 
     ui->in_Game_frame->hide();
-    ui->win_Game_frame->show();
+    ui->end_Game_frame->show();
     ui->record_frame->show();
+
+    this->setRecordTime(this->timeElapsed());
 
     ui->verdict_label->setText("Красава!");
     ui->label_Elapsed_end->setText( timeElapsed() );
-    ui->label_mousepress_end->setText( QString::number( mousePressCount ) );
+    ui->label_mousepress_end->setText( QString::number( clickCount ) );
     ui->startButton->setText("Хочу еще!");
     timer->stop();
 }
@@ -102,11 +102,11 @@ void GameWindow::lossGame()
     ui->startButton->show();
 
     ui->in_Game_frame->hide();
-    ui->win_Game_frame->show();
+    ui->end_Game_frame->show();
 
     ui->verdict_label->setText("Фу, лох!");
     ui->label_Elapsed_end->setText( timeElapsed() );
-    ui->label_mousepress_end->setText( QString::number( mousePressCount ) );
+    ui->label_mousepress_end->setText( QString::number( clickCount ) );
     ui->startButton->setText("Отомстить!");
     timer->stop();
 }
@@ -175,13 +175,12 @@ void GameWindow::on_timeOut()
 
 void GameWindow::mousePressEvent(QMouseEvent *event)
 {
-    mousePressCount++;
-
     bool hit = false; //этот флаг хранит состояние попал\не попал
     for (auto item = begin(items); item != end(items); ++item)
     {
         if( item->path.contains(event->pos() - item->position)&&event->button() == Qt::LeftButton )
         {
+            clickCount++;
             items.erase(item);
             hit = true;
             update();
@@ -191,6 +190,7 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
 
     if( !hit && !items.empty() )
     {
+        clickCount++;
         for( int i(0); i < 3; ++i )
         {
             Item item;
@@ -232,7 +232,7 @@ void GameWindow::paintEvent( QPaintEvent *event )
     {
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.position );
-        painter.setPen      ( { item.colorPen, 2 } );
+        painter.setPen      ( { item.colorPen, 3 } );
         painter.fillPath    ( item.path, item.colorFill );
         painter.drawPath    ( item.path );
         painter.restore();  // вернули в прежнее состояние

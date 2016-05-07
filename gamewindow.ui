@@ -323,7 +323,7 @@
     </spacer>
    </item>
    <item row="0" column="1">
-    <widget class="QFrame" name="win_Game_frame">
+    <widget class="QFrame" name="end_Game_frame">
      <property name="enabled">
       <bool>true</bool>
      </property>

@@ -8,8 +8,6 @@
 #include "item.h"
 #include "recordswindow.h"
 
-
-
 namespace Ui {
 class Dialog;
 }
@@ -28,27 +26,28 @@ private:
     RecordsWindow *records;
     QTimer *timer;
     QElapsedTimer *etimer;
-    int mousePressCount = 0;
-    int maxItems = 50;
 
-    inline float percentItems(int percent){ return ( maxItems / 100.0 ) * percent; }
+    int clickCount = 0;
+    int maxItems = 45;
+    QString recordTime;
 
-    inline int random(int min, int max) { return min + rand() % (max - min); }
+    void setRecordTime( QString time )          { this->recordTime = time; }
+    QString getRecordTime()                     { return this->recordTime; }
+    int getClickCount()                         { return this->clickCount; }
+    inline float percentItems( int percent )    { return ( maxItems / 100.0 ) * percent; }
+    inline int random( int min, int max )       { return min + rand() % (max - min); }
+    inline void randomizeItem( Item & item,
+                               int min_x, int min_y,
+                               int max_x, int max_y,
+                               int minVelocity, int maxVelocity );
 
-    inline void randomizeItem           ( Item & item,
-                                          int min_x, int min_y,
-                                          int max_x, int max_y,
-                                          int minVelocity, int maxVelocity );
-
-    void mousePressEvent(QMouseEvent * event);
-    void paintEvent(QPaintEvent * event);
     QString timeElapsed();
+    void mousePressEvent(QMouseEvent * event);
+    void paintEvent(QPaintEvent * event);    
 
     std::vector<Item> items;
 
-
 signals:
-    void noItems();
 
 private slots:
     void newGame();

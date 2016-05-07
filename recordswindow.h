@@ -15,8 +15,14 @@ public:
     explicit RecordsWindow(QWidget *parent = 0);
     ~RecordsWindow();
 
+private slots:
+    void on_add_name_button_clicked();
+    void on_ok_button_clicked();
+    void on_close_button_clicked();
+
 private:
     Ui::RecordsWindow *ui;
+
 };
 
 #endif // RECORDSWINDOW_H
