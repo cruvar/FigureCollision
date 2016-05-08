@@ -6,6 +6,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QTableWidget>
+#include <QSettings>
 #include "item.h"
 #include "record.h"
 
@@ -19,20 +20,24 @@ class GameWindow : public QDialog
 
 public:
 
-    explicit GameWindow(QWidget *parent = 0);
+    explicit GameWindow( QWidget *parent = 0 );
     ~GameWindow();
 
 private:
+
     Ui::Dialog *ui;
     QTimer *timer;
     QElapsedTimer *etimer;
     QTableWidget *record_table;
+    QSettings *settings;
     int clickCount = 0;
     int maxItems = 45;
-    QString recordTime;
+    int recordTime;
 
-    void setRecordTime( QString time )          { this->recordTime = time; }
-    QString getRecordTime()                     { return this->recordTime; }
+    void loadRecords();
+    void saveRecords();
+    void showRecords();
+
     int getClickCount()                         { return this->clickCount; }
     inline float percentItems( int percent )    { return ( maxItems / 100.0 ) * percent; }
     inline int random( int min, int max )       { return min + rand() % (max - min); }
@@ -41,6 +46,7 @@ private:
                                int max_x, int max_y,
                                int minVelocity, int maxVelocity );
     QString timeElapsed();
+    QString timeToString( qint64 time );
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent * event);    
 
@@ -50,6 +56,7 @@ private:
 signals:
 
 private slots:
+
     void newGame();
     void winGame();
     void lossGame();

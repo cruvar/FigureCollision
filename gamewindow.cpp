@@ -2,54 +2,56 @@
 #include "item.h"
 #include "ui_gamewindow.h"
 #include <QPainter>
+#include <algorithm>
 
 
-GameWindow::GameWindow(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::Dialog)
+GameWindow::GameWindow( QWidget *parent ) :
+    QDialog( parent ),
+    ui( new Ui::Dialog )
 {
-    ui->setupUi(this);
+    ui->setupUi( this );
+    this->loadRecords();
     setWindowTitle("Figures");
-    qsrand (QDateTime::currentMSecsSinceEpoch());
+    qsrand( QDateTime::currentMSecsSinceEpoch() );
     ui->in_Game_frame->hide();
     ui->end_Game_frame->hide();
     ui->record_frame->show();
     ui->add_record_frame->hide();
     etimer = new QElapsedTimer();
     etimer->start();
-    timer = new QTimer(this);
+    timer = new QTimer( this );
     timer->setInterval( 15 );
     record_table = new QTableWidget();
-    connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
 
-    this->record_table->setColumnCount(4);
-    this->record_table->setColumnWidth(0,10);
-    this->record_table->setColumnWidth(1,100);
-    this->record_table->setColumnWidth(2,50);
-    this->record_table->setColumnWidth(3,50);
-    this->record_table->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("ID")));
-    this->record_table->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Имя")));
-    this->record_table->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Время")));
-    this->record_table->setHorizontalHeaderItem(3, new QTableWidgetItem(tr("Клики")));
-    this->record_table->setShowGrid(true);
-    this->record_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    this->record_table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    this->record_table->setColumnHidden(0, true);
+    connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
+
+    this->record_table->setColumnCount( 3 );
+    this->record_table->setColumnWidth( 0, 100 );
+    this->record_table->setColumnWidth( 1, 100 );
+    this->record_table->setColumnWidth( 2, 50 );
+
+    this->record_table->setHorizontalHeaderItem( 0, new QTableWidgetItem( tr("Имя") ) );
+    this->record_table->setHorizontalHeaderItem( 1, new QTableWidgetItem( tr("Время") ) );
+    this->record_table->setHorizontalHeaderItem( 2, new QTableWidgetItem( tr("Клики") ) );
+    this->record_table->setShowGrid( true );
+    this->record_table->setSelectionMode( QAbstractItemView::SingleSelection );
+    this->record_table->setSelectionBehavior( QAbstractItemView::SelectRows );
+
 
 }
 
 void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int max_y, int minVelocity, int maxVelocity )
 {
     int velocity;
-    if (rand() % 2)
-        velocity = -random(abs(minVelocity), abs(maxVelocity));
+    if ( rand() % 2 )
+        velocity = -random( abs( minVelocity ), abs( maxVelocity ) );
     else
-        velocity = random(abs(minVelocity), abs(maxVelocity));
+        velocity = random( abs( minVelocity ), abs( maxVelocity ) );
 
     item.position = QPointF( random( min_x, max_x), random( min_y, max_y) );
     item.velocity = QPointF( velocity, velocity );
-    item.colorFill = QColor( random( 0, 255), random( 0, 255), random( 0, 255) );
-    item.colorPen = QColor( random( 0, 255), random( 0, 255), random( 0, 255) );
+    item.colorFill = QColor( random( 0, 255 ), random( 0, 255 ), random( 0, 255 ) );
+    item.colorPen = QColor( random( 0, 255 ), random( 0, 255 ), random( 0, 255 ) );
 }
 
 void GameWindow::newGame()
@@ -66,7 +68,7 @@ void GameWindow::newGame()
 
     this->clickCount = 0;
 
-    for( int i(0); i < 15; ++i )
+    for( int i(0); i < 1; ++i )
     {
         Item item;
         item.radius = 27;
@@ -100,7 +102,7 @@ void GameWindow::winGame()
     ui->end_Game_frame->show();
     ui->record_frame->show();
     ui->add_record_frame->show();
-    this->setRecordTime(this->timeElapsed());
+    this->recordTime = etimer->elapsed();
     ui->verdict_label->setText("Красава!");
     ui->label_Elapsed_end->setText( timeElapsed() );
     ui->label_mousepress_end->setText( QString::number( clickCount ) );
@@ -127,8 +129,7 @@ void GameWindow::on_startButton_clicked()
 
 void GameWindow::on_recordsButton_clicked()
 {
-    this->record_table->show();
-
+    this->showRecords();
 }
 
 void GameWindow::on_add_name_Button_clicked()
@@ -137,15 +138,10 @@ void GameWindow::on_add_name_Button_clicked()
     record.name = ui->add_name_lineEdit->text();
     record.time = this->recordTime;
     record.clicks = this->clickCount;
-    records.push_back(record);
+    records.push_back( record );
 
-    this->record_table->insertRow(0);
-    //this->record_table->setItem(0, 0, new QTableWidgetItem(query.value(0).toString()));
-    this->record_table->setItem(0, 1, new QTableWidgetItem(record.name));
-    this->record_table->setItem(0, 2, new QTableWidgetItem(record.time));
-    this->record_table->setItem(0, 3, new QTableWidgetItem(QString::number(record.clicks)));
-    this->record_table->setRowHeight(0, 20);
-    qDebug() << record.name;
+    this->saveRecords();
+    this->showRecords();
 }
 
 void GameWindow::on_timeOut()
@@ -155,31 +151,31 @@ void GameWindow::on_timeOut()
         item.position += item.velocity;
 
         if( item.position.x() < item.radius )
-            item.velocity.rx() = fabs(item.velocity.x());
+            item.velocity.rx() = fabs( item.velocity.x() );
 
         if( item.position.y() < item.radius )
-            item.velocity.ry() = fabs(item.velocity.y());
+            item.velocity.ry() = fabs( item.velocity.y() );
 
         if( item.position.x() >= this->width() - item.radius )
-            item.velocity.rx() = -fabs(item.velocity.x());
+            item.velocity.rx() = -fabs( item.velocity.x() );
 
         if( item.position.y() >= this->height() - item.radius  )
-            item.velocity.ry() = -fabs(item.velocity.y());
+            item.velocity.ry() = -fabs( item.velocity.y() );
     }
 
-    ui->label_Elapsed->setText(timeElapsed());
-    ui->label_Items->setText(QString::number(items.size()));
-    QPalette p = ui->label_Items->palette();
+    ui->label_Elapsed->setText( timeElapsed() );
+    ui->label_Items->setText( QString::number(items.size() ) );
+    QPalette palette = ui->label_Items->palette();
 
     if ( items.size() > this->percentItems( 75 ) )
     {
-        p.setColor(QPalette::WindowText, Qt::red);
-        ui->label_Items->setPalette(p);
+        palette.setColor( QPalette::WindowText, Qt::red );
+        ui->label_Items->setPalette( palette );
     }
     else
     {
-        p.setColor(QPalette::WindowText, Qt::black);
-        ui->label_Items->setPalette(p);
+        palette.setColor( QPalette::WindowText, Qt::black );
+        ui->label_Items->setPalette( palette );
     }
 
     if( items.empty() )
@@ -195,15 +191,15 @@ void GameWindow::on_timeOut()
     update();
 }
 
-void GameWindow::mousePressEvent(QMouseEvent *event)
+void GameWindow::mousePressEvent( QMouseEvent *event )
 {
     bool hit = false; //этот флаг хранит состояние попал\не попал
-    for (auto item = begin(items); item != end(items); ++item)
+    for ( auto item = begin( items ); item != end( items ); ++item )
     {
-        if( item->path.contains(event->pos() - item->position)&&event->button() == Qt::LeftButton )
+        if( item->path.contains( event->pos() - item->position )&&event->button() == Qt::LeftButton )
         {
             clickCount++;
-            items.erase(item);
+            items.erase( item );
             hit = true;
             update();
             break;
@@ -261,12 +257,16 @@ void GameWindow::paintEvent( QPaintEvent *event )
 
 QString GameWindow::timeElapsed()
 {
-    qint64 res = etimer->elapsed();
-    qint64 sec = res / 1000;
+    return timeToString( etimer->elapsed());
+}
+
+QString GameWindow::timeToString(qint64 time)
+{
+    qint64 sec = time / 1000;
     qint64 min = sec / 60;
     sec %= 60;
     min %= 60;
-    QString timeElapsed = QString("%1:%2").arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+    QString timeElapsed = QString( "%1:%2" ).arg( min, 2, 10, QChar( '0' ) ).arg( sec, 2, 10, QChar( '0' ) );
     return timeElapsed;
 }
 
@@ -274,6 +274,66 @@ QString GameWindow::timeElapsed()
 GameWindow::~GameWindow()
 {
     delete ui;
+}
+
+void GameWindow::loadRecords()
+{
+    QFile file("records.txt");
+    if( !file.open(QIODevice::ReadOnly) )
+    {
+        return;
+    }
+    QByteArray line;
+    do
+    {
+        line = file.readLine().trimmed();
+        if(line.isEmpty())
+            break;
+        QList<QByteArray> columns = line.split( ' ' );
+        if(columns.size() != 3)
+            break;
+        Record record;
+        record.name = columns[0];
+        record.time = columns[1].toInt();
+        record.clicks = columns[2].toInt();
+        records.push_back(record);
+    }
+    while(true);
+
+
+}
+
+void GameWindow::saveRecords()
+{
+    QFile file("records.txt");
+    if( !file.open(QIODevice::WriteOnly | QIODevice::Truncate) )
+    {
+        qWarning() << "Cant open records.txt!!!";
+        return;
+    }
+
+    for( const Record & record : records )
+    {
+        QString line = record.name + " " + QString::number( record.time ) + " " + QString::number( record.clicks );
+        file.write( line.toLocal8Bit() + "\n" );
+    }
+
+}
+
+void GameWindow::showRecords()
+{
+    std::sort(begin(records), end(records));
+
+    this->record_table->setRowCount(records.size());
+    for( int row = 0; row < records.size(); ++row)
+    {
+        const Record & record = records[row];
+        this->record_table->setItem( row, 0, new QTableWidgetItem( record.name ) );
+        this->record_table->setItem( row, 1, new QTableWidgetItem( timeToString( record.time ) ) );
+        this->record_table->setItem( row, 2, new QTableWidgetItem( QString::number(record.clicks ) ) );
+        this->record_table->setRowHeight( row, 20 );
+    }
+    this->record_table->show();
 }
 
 

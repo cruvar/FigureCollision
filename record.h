@@ -5,10 +5,14 @@
 
 struct Record
 {
-    int id;
     QString name;
-    QString time;
+    qint64 time;
     int clicks;
 };
+
+inline bool operator < (const Record & a, const Record & b)
+{
+    return a.time < b.time;
+}
 
 #endif // RECORD_H
