@@ -3,6 +3,7 @@
 #include "ui_gamewindow.h"
 #include <QPainter>
 
+
 GameWindow::GameWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -10,20 +11,30 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Figures");
     qsrand (QDateTime::currentMSecsSinceEpoch());
-    recordswindow = new RecordsWindow();
-
     ui->in_Game_frame->hide();
     ui->end_Game_frame->hide();
     ui->record_frame->show();
     ui->add_record_frame->hide();
-
     etimer = new QElapsedTimer();
     etimer->start();
-
     timer = new QTimer(this);
     timer->setInterval( 15 );
-
+    record_table = new QTableWidget();
     connect( this->timer, SIGNAL(timeout()), this, SLOT(on_timeOut()) );
+
+    this->record_table->setColumnCount(4);
+    this->record_table->setColumnWidth(0,10);
+    this->record_table->setColumnWidth(1,100);
+    this->record_table->setColumnWidth(2,50);
+    this->record_table->setColumnWidth(3,50);
+    this->record_table->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("ID")));
+    this->record_table->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Имя")));
+    this->record_table->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Время")));
+    this->record_table->setHorizontalHeaderItem(3, new QTableWidgetItem(tr("Клики")));
+    this->record_table->setShowGrid(true);
+    this->record_table->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->record_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->record_table->setColumnHidden(0, true);
 
 }
 
@@ -89,9 +100,7 @@ void GameWindow::winGame()
     ui->end_Game_frame->show();
     ui->record_frame->show();
     ui->add_record_frame->show();
-
     this->setRecordTime(this->timeElapsed());
-
     ui->verdict_label->setText("Красава!");
     ui->label_Elapsed_end->setText( timeElapsed() );
     ui->label_mousepress_end->setText( QString::number( clickCount ) );
@@ -102,10 +111,8 @@ void GameWindow::winGame()
 void GameWindow::lossGame()
 {
     ui->startButton->show();
-
     ui->in_Game_frame->hide();
     ui->end_Game_frame->show();
-
     ui->verdict_label->setText("Фу, лох!");
     ui->label_Elapsed_end->setText( timeElapsed() );
     ui->label_mousepress_end->setText( QString::number( clickCount ) );
@@ -120,7 +127,7 @@ void GameWindow::on_startButton_clicked()
 
 void GameWindow::on_recordsButton_clicked()
 {
-    recordswindow->show();
+    this->record_table->show();
 
 }
 
@@ -131,6 +138,13 @@ void GameWindow::on_add_name_Button_clicked()
     record.time = this->recordTime;
     record.clicks = this->clickCount;
     records.push_back(record);
+
+    this->record_table->insertRow(0);
+    //this->record_table->setItem(0, 0, new QTableWidgetItem(query.value(0).toString()));
+    this->record_table->setItem(0, 1, new QTableWidgetItem(record.name));
+    this->record_table->setItem(0, 2, new QTableWidgetItem(record.time));
+    this->record_table->setItem(0, 3, new QTableWidgetItem(QString::number(record.clicks)));
+    this->record_table->setRowHeight(0, 20);
     qDebug() << record.name;
 }
 

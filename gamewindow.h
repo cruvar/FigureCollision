@@ -5,9 +5,9 @@
 #include <QDialog>
 #include <QtCore>
 #include <QtGui>
+#include <QTableWidget>
 #include "item.h"
 #include "record.h"
-#include "recordswindow.h"
 
 namespace Ui {
 class Dialog;
@@ -24,10 +24,9 @@ public:
 
 private:
     Ui::Dialog *ui;
-    RecordsWindow *recordswindow;
     QTimer *timer;
     QElapsedTimer *etimer;
-
+    QTableWidget *record_table;
     int clickCount = 0;
     int maxItems = 45;
     QString recordTime;
@@ -41,7 +40,6 @@ private:
                                int min_x, int min_y,
                                int max_x, int max_y,
                                int minVelocity, int maxVelocity );
-
     QString timeElapsed();
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent * event);    
