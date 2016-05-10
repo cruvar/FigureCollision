@@ -25,10 +25,12 @@ GameWindow::GameWindow( QWidget *parent ) :
 
     connect( this->timer, SIGNAL( timeout() ), this, SLOT( on_timeOut() ) );
 
+    ui->add_name_lineEdit->setValidator(new QRegExpValidator( QRegExp( "[A-Za-z0-9]{1,9}" ) ) );
+
     this->record_table->setColumnCount( 3 );
     this->record_table->setColumnWidth( 0, 100 );
     this->record_table->setColumnWidth( 1, 100 );
-    this->record_table->setColumnWidth( 2, 50 );
+    this->record_table->setColumnWidth( 2, 70 );
 
     this->record_table->setHorizontalHeaderItem( 0, new QTableWidgetItem( tr("Имя") ) );
     this->record_table->setHorizontalHeaderItem( 1, new QTableWidgetItem( tr("Время") ) );
@@ -36,6 +38,7 @@ GameWindow::GameWindow( QWidget *parent ) :
     this->record_table->setShowGrid( true );
     this->record_table->setSelectionMode( QAbstractItemView::SingleSelection );
     this->record_table->setSelectionBehavior( QAbstractItemView::SelectRows );
+    this->record_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 
 }
@@ -68,7 +71,7 @@ void GameWindow::newGame()
 
     this->clickCount = 0;
 
-    for( int i(0); i < 1; ++i )
+    for( int i(0); i < 15; ++i )
     {
         Item item;
         item.radius = 27;
@@ -140,7 +143,15 @@ void GameWindow::on_add_name_Button_clicked()
     record.clicks = this->clickCount;
     records.push_back( record );
 
-    this->saveRecords();
+    if(ui->add_name_lineEdit->hasAcceptableInput())
+    {
+        this->saveRecords();
+    }
+    else
+    {
+        qDebug() << "хуй";
+    }
+
     this->showRecords();
 }
 
@@ -189,6 +200,66 @@ void GameWindow::on_timeOut()
         this->lossGame();
     }
     update();
+}
+
+void GameWindow::loadRecords()
+{
+    QFile file("records.txt");
+    if( !file.open(QIODevice::ReadOnly) )
+    {
+        return;
+    }
+    QByteArray line;
+    do
+    {
+        line = file.readLine().trimmed();
+        if(line.isEmpty())
+            break;
+        QList<QByteArray> columns = line.split( ' ' );
+        if(columns.size() != 3)
+            break;
+        Record record;
+        record.name = columns[0];
+        record.time = columns[1].toInt();
+        record.clicks = columns[2].toInt();
+        records.push_back(record);
+    }
+    while(true);
+
+
+}
+
+void GameWindow::saveRecords()
+{
+    QFile file("records.txt");
+    if( !file.open(QIODevice::WriteOnly | QIODevice::Truncate) )
+    {
+        qWarning() << "Cant open records.txt!!!";
+        return;
+    }
+
+    for( const Record & record : records )
+    {
+        QString line = record.name + " " + QString::number( record.time ) + " " + QString::number( record.clicks );
+        file.write( line.toLocal8Bit() + "\n" );
+    }
+
+}
+
+void GameWindow::showRecords()
+{
+    std::sort(begin(records), end(records));
+
+    this->record_table->setRowCount(records.size());
+    for( int row = 0; row < records.size(); ++row)
+    {
+        const Record & record = records[row];
+        this->record_table->setItem( row, 0, new QTableWidgetItem( record.name ) );
+        this->record_table->setItem( row, 1, new QTableWidgetItem( timeToString( record.time ) ) );
+        this->record_table->setItem( row, 2, new QTableWidgetItem( QString::number(record.clicks ) ) );
+        this->record_table->setRowHeight( row, 20 );
+    }
+    this->record_table->show();
 }
 
 void GameWindow::mousePressEvent( QMouseEvent *event )
@@ -276,64 +347,6 @@ GameWindow::~GameWindow()
     delete ui;
 }
 
-void GameWindow::loadRecords()
-{
-    QFile file("records.txt");
-    if( !file.open(QIODevice::ReadOnly) )
-    {
-        return;
-    }
-    QByteArray line;
-    do
-    {
-        line = file.readLine().trimmed();
-        if(line.isEmpty())
-            break;
-        QList<QByteArray> columns = line.split( ' ' );
-        if(columns.size() != 3)
-            break;
-        Record record;
-        record.name = columns[0];
-        record.time = columns[1].toInt();
-        record.clicks = columns[2].toInt();
-        records.push_back(record);
-    }
-    while(true);
 
-
-}
-
-void GameWindow::saveRecords()
-{
-    QFile file("records.txt");
-    if( !file.open(QIODevice::WriteOnly | QIODevice::Truncate) )
-    {
-        qWarning() << "Cant open records.txt!!!";
-        return;
-    }
-
-    for( const Record & record : records )
-    {
-        QString line = record.name + " " + QString::number( record.time ) + " " + QString::number( record.clicks );
-        file.write( line.toLocal8Bit() + "\n" );
-    }
-
-}
-
-void GameWindow::showRecords()
-{
-    std::sort(begin(records), end(records));
-
-    this->record_table->setRowCount(records.size());
-    for( int row = 0; row < records.size(); ++row)
-    {
-        const Record & record = records[row];
-        this->record_table->setItem( row, 0, new QTableWidgetItem( record.name ) );
-        this->record_table->setItem( row, 1, new QTableWidgetItem( timeToString( record.time ) ) );
-        this->record_table->setItem( row, 2, new QTableWidgetItem( QString::number(record.clicks ) ) );
-        this->record_table->setRowHeight( row, 20 );
-    }
-    this->record_table->show();
-}
 
 

@@ -232,6 +232,15 @@
                <family>Upheaval Pro</family>
               </font>
              </property>
+             <property name="locale">
+              <locale language="English" country="UnitedStates"/>
+             </property>
+             <property name="inputMethodHints">
+              <set>Qt::ImhNone</set>
+             </property>
+             <property name="maxLength">
+              <number>10</number>
+             </property>
             </widget>
            </item>
            <item>
