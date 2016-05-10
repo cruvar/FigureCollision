@@ -30,15 +30,15 @@ private:
     QElapsedTimer *etimer;
     QTableWidget *record_table;
     QSettings *settings;
-    int clickCount = 0;
-    int maxItems = 45;
-    int recordTime;
+    uint clickCount = 0;
+    uint maxItems = 45;
+    uint recordTime;
 
     void loadRecords();
     void saveRecords();
     void showRecords();
 
-    int getClickCount()                         { return this->clickCount; }
+    uint getClickCount()                        { return this->clickCount; }
     inline float percentItems( int percent )    { return ( maxItems / 100.0 ) * percent; }
     inline int random( int min, int max )       { return min + rand() % (max - min); }
     inline void randomizeItem( Item & item,

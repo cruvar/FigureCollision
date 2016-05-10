@@ -40,7 +40,6 @@ GameWindow::GameWindow( QWidget *parent ) :
     this->record_table->setSelectionBehavior( QAbstractItemView::SelectRows );
     this->record_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-
 }
 
 void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int max_y, int minVelocity, int maxVelocity )
@@ -143,15 +142,7 @@ void GameWindow::on_add_name_Button_clicked()
     record.clicks = this->clickCount;
     records.push_back( record );
 
-    if(ui->add_name_lineEdit->hasAcceptableInput())
-    {
-        this->saveRecords();
-    }
-    else
-    {
-        qDebug() << "хуй";
-    }
-
+    this->saveRecords();
     this->showRecords();
 }
 
@@ -180,8 +171,9 @@ void GameWindow::on_timeOut()
 
     if ( items.size() > this->percentItems( 75 ) )
     {
-        palette.setColor( QPalette::WindowText, Qt::red );
+        palette.setColor( QPalette::Window, Qt::red );
         ui->label_Items->setPalette( palette );
+        //this->setPalette( palette );
     }
     else
     {
@@ -251,7 +243,7 @@ void GameWindow::showRecords()
     std::sort(begin(records), end(records));
 
     this->record_table->setRowCount(records.size());
-    for( int row = 0; row < records.size(); ++row)
+    for( uint row = 0; row < records.size(); ++row)
     {
         const Record & record = records[row];
         this->record_table->setItem( row, 0, new QTableWidgetItem( record.name ) );
@@ -259,6 +251,7 @@ void GameWindow::showRecords()
         this->record_table->setItem( row, 2, new QTableWidgetItem( QString::number(record.clicks ) ) );
         this->record_table->setRowHeight( row, 20 );
     }
+    this->record_table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     this->record_table->show();
 }
 
@@ -317,6 +310,7 @@ void GameWindow::paintEvent( QPaintEvent *event )
     {
         painter.save();     // сохранили состояние пеинтера
         painter.translate   ( item.position );
+        //painter.rotate      ( QDateTime::currentMSecsSinceEpoch() % 360 );
         painter.setPen      ( { item.colorPen, 2 } );
         painter.fillPath    ( item.path, item.colorFill );
         painter.drawPath    ( item.path );
