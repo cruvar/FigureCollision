@@ -28,16 +28,21 @@ GameWindow::GameWindow( QWidget *parent ) :
 
     ui->add_name_lineEdit->setValidator(new QRegExpValidator( QRegExp( "[A-Za-z0-9]{1,9}" ) ) );
 
+    QFont font;
+    font.setPointSize(14);
+    this->record_table->setFont(font);
+
+    this->record_table->setMinimumHeight(400);
+    this->record_table->setMinimumWidth(300);
     this->record_table->setWindowTitle("Летопись Героев");
     this->record_table->setColumnCount( 3 ); 
     this->record_table->setHorizontalHeaderItem( 0, new QTableWidgetItem( tr("Имя") ) );
     this->record_table->setHorizontalHeaderItem( 1, new QTableWidgetItem( tr("Время") ) );
     this->record_table->setHorizontalHeaderItem( 2, new QTableWidgetItem( tr("Клики") ) );
-    this->record_table->setShowGrid( true );
+    this->record_table->setShowGrid( false );
     this->record_table->setSelectionMode( QAbstractItemView::SingleSelection );
     this->record_table->setSelectionBehavior( QAbstractItemView::SelectRows );
     this->record_table->setEditTriggers( QAbstractItemView::NoEditTriggers );
-
 
 }
 
@@ -253,6 +258,7 @@ void GameWindow::showRecords()
     }
     this->record_table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     this->record_table->show();
+
 }
 
 void GameWindow::mousePressEvent( QMouseEvent *event )

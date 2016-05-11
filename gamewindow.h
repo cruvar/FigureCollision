@@ -6,7 +6,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QTableWidget>
-#include <QSettings>
+
 #include "item.h"
 #include "record.h"
 
@@ -29,7 +29,7 @@ private:
     QTimer *timer;
     QElapsedTimer *etimer;
     QTableWidget *record_table;
-    QSettings *settings;
+
     uint clickCount = 0;
     uint maxItems = 45;
     uint recordTime;
