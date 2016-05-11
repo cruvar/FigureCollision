@@ -3,6 +3,7 @@
 #include "ui_gamewindow.h"
 #include <QPainter>
 #include <algorithm>
+#include <QSound>
 
 
 GameWindow::GameWindow( QWidget *parent ) :
@@ -11,7 +12,7 @@ GameWindow::GameWindow( QWidget *parent ) :
 {
     ui->setupUi( this );
     this->loadRecords();
-    setWindowTitle("Figures");
+    setWindowTitle("Figures v0.1");
     qsrand( QDateTime::currentMSecsSinceEpoch() );
     ui->in_Game_frame->hide();
     ui->end_Game_frame->hide();
@@ -27,18 +28,16 @@ GameWindow::GameWindow( QWidget *parent ) :
 
     ui->add_name_lineEdit->setValidator(new QRegExpValidator( QRegExp( "[A-Za-z0-9]{1,9}" ) ) );
 
-    this->record_table->setColumnCount( 3 );
-    this->record_table->setColumnWidth( 0, 100 );
-    this->record_table->setColumnWidth( 1, 100 );
-    this->record_table->setColumnWidth( 2, 70 );
-
+    this->record_table->setWindowTitle("Летопись Героев");
+    this->record_table->setColumnCount( 3 ); 
     this->record_table->setHorizontalHeaderItem( 0, new QTableWidgetItem( tr("Имя") ) );
     this->record_table->setHorizontalHeaderItem( 1, new QTableWidgetItem( tr("Время") ) );
     this->record_table->setHorizontalHeaderItem( 2, new QTableWidgetItem( tr("Клики") ) );
     this->record_table->setShowGrid( true );
     this->record_table->setSelectionMode( QAbstractItemView::SingleSelection );
     this->record_table->setSelectionBehavior( QAbstractItemView::SelectRows );
-    this->record_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    this->record_table->setEditTriggers( QAbstractItemView::NoEditTriggers );
+
 
 }
 
@@ -59,7 +58,6 @@ void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int
 void GameWindow::newGame()
 {
     ui->startButton->hide();
-
     ui->in_Game_frame->show();
     ui->end_Game_frame->hide();
     ui->record_frame->hide();
@@ -98,8 +96,8 @@ void GameWindow::newGame()
 
 void GameWindow::winGame()
 {
-    ui->startButton->show();
-
+    QSound::play(":/recources/sounds/win.wav");
+    ui->startButton->show();  
     ui->in_Game_frame->hide();
     ui->end_Game_frame->show();
     ui->record_frame->show();
@@ -114,6 +112,7 @@ void GameWindow::winGame()
 
 void GameWindow::lossGame()
 {
+    QSound::play(":/recources/sounds/lose.wav");
     ui->startButton->show();
     ui->in_Game_frame->hide();
     ui->end_Game_frame->show();
@@ -126,6 +125,7 @@ void GameWindow::lossGame()
 
 void GameWindow::on_startButton_clicked()
 {
+    QSound::play(":/recources/sounds/new_game.wav");
     this->newGame();
 }
 
@@ -171,9 +171,10 @@ void GameWindow::on_timeOut()
 
     if ( items.size() > this->percentItems( 75 ) )
     {
-        palette.setColor( QPalette::Window, Qt::red );
+
+        palette.setColor( QPalette::WindowText, Qt::red );
         ui->label_Items->setPalette( palette );
-        //this->setPalette( palette );
+
     }
     else
     {
@@ -217,8 +218,6 @@ void GameWindow::loadRecords()
         records.push_back(record);
     }
     while(true);
-
-
 }
 
 void GameWindow::saveRecords()
@@ -243,6 +242,7 @@ void GameWindow::showRecords()
     std::sort(begin(records), end(records));
 
     this->record_table->setRowCount(records.size());
+    this->record_table->resizeColumnsToContents();
     for( uint row = 0; row < records.size(); ++row)
     {
         const Record & record = records[row];
@@ -262,6 +262,7 @@ void GameWindow::mousePressEvent( QMouseEvent *event )
     {
         if( item->path.contains( event->pos() - item->position )&&event->button() == Qt::LeftButton )
         {
+            QSound::play(":/recources/sounds/hit.wav");
             clickCount++;
             items.erase( item );
             hit = true;
@@ -272,6 +273,7 @@ void GameWindow::mousePressEvent( QMouseEvent *event )
 
     if( !hit && !items.empty() )
     {
+        QSound::play(":/recources/sounds/miss.wav");
         clickCount++;
         for( int i(0); i < 3; ++i )
         {

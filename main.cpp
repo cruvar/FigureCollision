@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    int fontId = QFontDatabase::addApplicationFont(":/recources/UpheavalPro.ttf");
+    int fontId = QFontDatabase::addApplicationFont(":recources/fonts/UpheavalPro.ttf");
     QString family = QFontDatabase::applicationFontFamilies(fontId).at(0);
     QFont font(family);
     a.setFont(font);

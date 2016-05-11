@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,4 +29,4 @@ CONFIG += c++11
 DISTFILES +=
 
 RESOURCES += \
-    fonts.qrc
+    recources.qrc
