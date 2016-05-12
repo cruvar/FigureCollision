@@ -1,11 +1,9 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-#include <vector>
 #include <QDialog>
-#include <QtCore>
-#include <QtGui>
 #include <QTableWidget>
+#include <vector>
 
 #include "item.h"
 #include "record.h"
@@ -38,7 +36,6 @@ private:
     void saveRecords();
     void showRecords();
 
-    uint getClickCount()                        { return this->clickCount; }
     inline float percentItems( int percent )    { return ( maxItems / 100.0 ) * percent; }
     inline int random( int min, int max )       { return min + rand() % (max - min); }
     inline void randomizeItem( Item & item,
