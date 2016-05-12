@@ -1,13 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>recources/fonts/UpheavalPro.ttf</file>
-        <file>recources/sounds/button.wav</file>
         <file>recources/sounds/hit.wav</file>
         <file>recources/sounds/lose.wav</file>
         <file>recources/sounds/miss.wav</file>
-        <file>recources/sounds/win.wav</file>
-        <file>recources/sounds/hit_2.wav</file>
         <file>recources/sounds/new_game.wav</file>
-        <file>recources/sounds/warning.wav</file>
+        <file>recources/sounds/win.wav</file>
+        <file>recources/fonts/UpheavalPro.ttf</file>
     </qresource>
 </RCC>
