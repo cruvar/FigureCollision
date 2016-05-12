@@ -46,16 +46,23 @@ GameWindow::GameWindow( QWidget *parent ) :
 
 }
 
-void GameWindow::randomizeItem( Item & item,int min_x, int min_y, int max_x, int max_y, int minVelocity, int maxVelocity )
+void GameWindow::randomizeItem( Item & item, int min_x, int min_y, int max_x, int max_y, int minVelocity, int maxVelocity )
 {
-    int velocity;
+    int velocityX;
+    int velocityY;
     if ( rand() % 2 )
-        velocity = -random( abs( minVelocity ), abs( maxVelocity ) );
+    {
+        velocityX = -random( abs( minVelocity ), abs( maxVelocity ) );
+        velocityY = -random( abs( minVelocity ), abs( maxVelocity ) );
+    }
     else
-        velocity = random( abs( minVelocity ), abs( maxVelocity ) );
+    {
+        velocityX = random( abs( minVelocity ), abs( maxVelocity ) );
+        velocityY = random( abs( minVelocity ), abs( maxVelocity ) );
+    }
 
     item.position = QPointF( random( min_x, max_x), random( min_y, max_y) );
-    item.velocity = QPointF( velocity, velocity );
+    item.velocity = QPointF( velocityX, velocityY );
     item.colorFill = QColor( random( 0, 255 ), random( 0, 255 ), random( 0, 255 ) );
     item.colorPen = QColor( random( 0, 255 ), random( 0, 255 ), random( 0, 255 ) );
 }
